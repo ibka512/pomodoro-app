@@ -867,7 +867,13 @@ updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
 
             function playTickSound() { playTone(600, 0.015, 'triangle'); vibrate([8]); }
             function playStartSound() { const dur = 0.2; playTone(880.00, dur); setTimeout(() => playTone(1108.73, dur), 100); }
-            function playCompletionSound() { playTone(523.25, 0.3); setTimeout(() => playTone(659.25, 0.3), 150); setTimeout(() => playTone(783.99, 0.3), 300); setTimeout(() => playTone(1046.50, 0.55), 450); }
+            function playCompletionSound() {
+    const d = 153;
+    playTone(523.25, 40/d);
+    setTimeout(() => playTone(659.25, 20/d), 40/d * 1000);
+    setTimeout(() => playTone(783.99, 40/d), (40+20)/d * 1000);
+    setTimeout(() => playTone(1046.50, 20/d), (40+20+40)/d * 1000);
+}
             function playResetSound() { const dur = 0.2; playTone(1318.51, dur); playTone(698.46, dur); setTimeout(() => { playTone(1174.66, dur); playTone(698.46, dur); }, 100); setTimeout(() => { playTone(1567.98, dur); playTone(698.46, dur); }, 200); }
             
             function vibrate(p) { 
@@ -1026,9 +1032,16 @@ updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
                 timeDisplay.style.fontVariationSettings = `"wght" 700, "wdth" 100`;
                 progressContainer.classList.add('completed-anim'); setTimeout(()=>progressContainer.classList.remove('completed-anim'),1500);
                 
-                if (!isSkip) {
-                    playCompletionSound(); vibrateComplete();
-                    if(!appData.history) {
+                playCompletionSound();
+if (!isSkip) {
+    vibrateComplete();
+    if (Notification.permission === 'granted') {
+        const t = getT();
+        const title = t.title;
+        const body = currentMode === 'work' ? t.toastWorkDone : t.toastBreakDone;
+        new Notification(title, { body, icon: './icon.png', silent: true });
+    }
+    if(!appData.history) {
                         appData.history = { work: {count:0,seconds:0}, shortBreak: {count:0,seconds:0}, longBreak: {count:0,seconds:0} };
                     }
                     appData.history[currentMode].count += 1;
@@ -1066,9 +1079,10 @@ updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
             
             // 按钮专属的时间加减（分钟为单位）
             function adjustDuration(deltaSecs) { 
-                if(isRunning) return; 
-                const isPristine = (remainingSeconds === totalSeconds && !isRunning);
-                if(!isPristine) return; 
+        if(isRunning) return; 
+        autoStartNext = false;
+        const isPristine = (remainingSeconds === totalSeconds && !isRunning);
+        if(!isPristine) return;
                 
                 let newSecs = appData.durations[currentMode] + deltaSecs; 
                 newSecs = Math.max(1, Math.min(120 * 60, newSecs)); // 最小1秒，最大120分钟
@@ -1233,7 +1247,12 @@ updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
             statsEntryBtn.addEventListener('click',()=>{ statsOverlay.classList.add('active'); statsSheet.classList.add('active'); updateStatsUI(); });
             statsOverlay.addEventListener('click',()=>{ statsOverlay.classList.remove('active'); statsSheet.classList.remove('active'); });
 
-            fabPlay.addEventListener('click',()=>{ if(isRunning){ pauseTimer(); vibrateCancel(); } else startTimer(); });
+            fabPlay.addEventListener('click',()=>{ 
+    if (Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+    if(isRunning){ pauseTimer(); vibrateCancel(); } else startTimer(); 
+});
             resetBtn.addEventListener('click',()=>{ resetTimer(); vibrateReset(); });
             skipBtn.addEventListener('click',()=>{ skipCurrent(); vibrateSkip(); });
             
