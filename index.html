@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>番茄钟</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#A33B31">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&family=Nunito:wght@400;500;600;700&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&family=Zen+Old+Mincho:wght@600&display=swap" rel="stylesheet">
+
+    <style>
+                :root {
+            /* ====== 主色调系列（核心视觉强调色） ====== */
+            --md-sys-color-primary: #A33B31; /* 进度条拖尾填充、主播放按钮背景、设置滑块填充部分、统计数据中的数字、时间输入态虚线 */
+            --md-sys-color-on-primary: #FFFFFF; /* 主播放按钮内部的图标颜色 */
+            --md-sys-color-primary-container: #FFDAD5; /* 当前模式(工作/休息)的滑块背景指示器、统计卡片左侧方块图标背景 */
+            --md-sys-color-on-primary-container: #410001; /* 激活状态下的模式文字(如高亮“工作”字样)、按钮点击时的水波纹涟漪颜色 */
+
+            /* ====== 次要色调系列 ====== */
+            --md-sys-color-secondary: #775652; /* 预留次要色(当前无直接显式调用) */
+            --md-sys-color-on-secondary: #FFFFFF; /* 预留次要色文本 */
+            --md-sys-color-secondary-container: #FFDAD5; /* 倒计时运行状态下(方形)的播放/暂停按钮背景色 */
+            --md-sys-color-on-secondary-container: #2C1512; /* 倒计时运行状态下的暂停图标颜色 */
+
+            /* ====== 第三色调系列（当前用于第一级警告状态） ====== */
+            --md-sys-color-tertiary: #715B2E; /* 时间剩余少于 25% 时的警告色：圆环进度条和中间倒计时大数字颜色 */
+            --md-sys-color-on-tertiary: #FFFFFF; /* 预留 */
+            --md-sys-color-tertiary-container: #FDE0A6; /* 预留 */
+            --md-sys-color-on-tertiary-container: #261900; /* 预留 */
+
+            /* ====== 错误/危险色调系列（当前用于最紧急警告状态） ====== */
+            --md-sys-color-error: #BA1A1A; /* 时间剩余少于 10% 时的紧急色：圆环进度条和中间倒计时大数字颜色 */
+            --md-sys-color-on-error: #FFFFFF; /* 预留 */
+            --md-sys-color-error-container: #FFDAD6; /* 预留 */
+            --md-sys-color-on-error-container: #410002; /* 预留 */
+
+            /* ====== 表面及背景色调系列（大面积背景和文字） ====== */
+            --md-sys-color-surface: #FFF8F6; /* 整个页面的最底层大背景颜色 */
+            --md-sys-color-on-surface: #231918; /* 页面的主要高对比度文字颜色：顶部主标题、中间巨大的倒计时数字、弹窗标题 */
+            --md-sys-color-surface-variant: #F5E9E7; /* 各类按钮被按压(active)时的背景变化反馈色 */
+            --md-sys-color-on-surface-variant: #534341; /* 次要文字/图标颜色：未激活的模式文字、设置项文字与图标、加减号及重置小按钮颜色 */
+            
+            /* ====== 轮廓线条颜色 ====== */
+            --md-sys-color-outline: #857370; /* 预留基础轮廓色 */
+            --md-sys-color-outline-variant: #D8C2BF; /* 倒计时待机可点击时的虚线下划线颜色、底部弹窗顶部的小把手(横条)颜色 */
+
+            /* ====== 表面容器色系（区分卡片层级，从低到高颜色逐渐加深/凸起） ====== */
+            --md-sys-color-surface-container-lowest: #FFFFFF; /* 最浅层：设置项滑块的圆形推钮中心背景色 */
+            --md-sys-color-surface-container-low: #FFF1EF; /* 基础卡片层：顶部小标题卡片、中间倒计时巨大卡片、底部上拉设置/统计弹窗整体背景 */
+            --md-sys-color-surface-container: #FCEAE8; /* 预留中间容器级 */
+            --md-sys-color-surface-container-high: #F6E4E2; /* 较高层：模式切换长条底色、控制按钮面板底色、记录统计长条按钮按下时的底色 */
+            --md-sys-color-surface-container-highest: #F1DFDD; /* 最高/最深层：右上角(主题/设置)圆形小按钮底色、进度条环底部的灰色轨道、语言切换控件底色、统计单条卡片底色 */
+
+            /* ====== 反转表面色（用于黑色对比提示框） ====== */
+            --md-sys-color-inverse-surface: #382E2D; /* 底部弹出的 Toast 提示框背景色（如“工作完成！”） */
+            --md-sys-color-inverse-on-surface: #FFEDEA; /* 底部弹出的 Toast 提示框内的文字颜色 */
+
+
+            --md-sys-shape-corner-extra-small: 8px;
+            --md-sys-shape-corner-small: 16px;
+            --md-sys-shape-corner-medium: 24px;
+            --md-sys-shape-corner-large: 32px;
+            --md-sys-shape-corner-extra-large: 40px;
+            --md-sys-shape-corner-full: 999px;
+
+            --md-sys-elevation-0: 0px 0px 0px rgba(0,0,0,0);
+            --md-sys-elevation-1: 0px 4px 8px rgba(163,59,49,0.08), 0px 1px 3px rgba(163,59,49,0.04);
+            --md-sys-elevation-2: 0px 6px 12px rgba(163,59,49,0.12), 0px 3px 6px rgba(163,59,49,0.08);
+            --md-sys-elevation-3: 0px 8px 16px rgba(163,59,49,0.16), 0px 4px 8px rgba(163,59,49,0.10);
+            
+            --anim-speed: 1.2s; 
+            --md-sys-motion-easing-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1.0);
+            --md-sys-motion-easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        body.dark {
+            /* ====== 主色调系列（同上，控制深色模式下主要强调色） ====== */
+            --md-sys-color-primary: #FFB4AB; /* 进度条拖尾、大播放按钮背景、设置滑块等主色 */
+            --md-sys-color-on-primary: #690003; /* 大播放按钮内的图标 */
+            --md-sys-color-primary-container: #83241C; /* 模式指示器条、统计左侧方块背景 */
+            --md-sys-color-on-primary-container: #FFDAD5; /* 激活的模式文字(如“工作”)、水波纹 */
+            
+            /* ====== 次要色调系列 ====== */
+            --md-sys-color-secondary: #E7BDB7;
+            --md-sys-color-on-secondary: #442926;
+            --md-sys-color-secondary-container: #5D3F3B; /* 倒计时运行时的播放/暂停按钮背景 */
+            --md-sys-color-on-secondary-container: #FFDAD5; /* 倒计时运行时的暂停图标 */
+            
+            /* ====== 第三色调系列（警告状态） ====== */
+            --md-sys-color-tertiary: #E0C48C; /* 剩余<25%时的警告色(进度条/时间字) */
+            --md-sys-color-on-tertiary: #3F2E04;
+            --md-sys-color-tertiary-container: #584419;
+            --md-sys-color-on-tertiary-container: #FDE0A6;
+            
+            /* ====== 错误/危险色调系列（紧急警告状态） ====== */
+            --md-sys-color-error: #FFB4AB; /* 剩余<10%时的紧急色(进度条/时间字) */
+            --md-sys-color-on-error: #690005;
+            --md-sys-color-error-container: #93000A;
+            --md-sys-color-on-error-container: #FFDAD6;
+            
+            /* ====== 深色模式下的表面大背景和文字 ====== */
+            --md-sys-color-surface: #1A1110; /* 最底层大背景(纯黑/深灰) */
+            --md-sys-color-on-surface: #F1DFDD; /* 最亮的文字(主标题、大倒计时数字等) */
+            --md-sys-color-surface-variant: #534341; /* 按钮按压时的底色反馈 */
+            --md-sys-color-on-surface-variant: #D8C2BF; /* 次要文字、未激活模式字、次要图标 */
+            
+            /* ====== 轮廓线条 ====== */
+            --md-sys-color-outline: #A08C89; 
+            --md-sys-color-outline-variant: #534341; /* 虚线下划线颜色、弹窗把手颜色 */
+            
+            /* ====== 表面容器色系（深色模式下，由最深到稍浅渐变） ====== */
+            --md-sys-color-surface-container-lowest: #140C0B; /* 滑块圆形推钮底色 */
+            --md-sys-color-surface-container-low: #1A1110; /* 主倒计时大卡片、顶部卡片底色 */
+            --md-sys-color-surface-container: #211514; 
+            --md-sys-color-surface-container-high: #2B1F1E; /* 控制按钮面板底色、模式切换条底色 */
+            --md-sys-color-surface-container-highest: #362928; /* 右上角小按钮、圆环轨道、语言切换底色 */
+            
+            /* ====== 反转表面色（深色模式下的Toast提示往往更亮以形成反比） ====== */
+            --md-sys-color-inverse-surface: #F1DFDD; /* Toast 提示背景色 */
+            --md-sys-color-inverse-on-surface: #382E2D; /* Toast 提示文字颜色 */
+
+            /* 深色模式下的阴影处理（无需修改，负责弥补黑底阴影不明显的问题） */
+            --md-sys-elevation-1: 0px 4px 8px rgba(0,0,0,0.5), 0px 2px 4px rgba(0,0,0,0.4);
+            --md-sys-elevation-2: 0px 6px 12px rgba(0,0,0,0.6), 0px 3px 6px rgba(0,0,0,0.5);
+            --md-sys-elevation-3: 0px 8px 16px rgba(0,0,0,0.7), 0px 4px 8px rgba(0,0,0,0.6);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
+
+        html, body {
+            height: 100%; width: 100%; overflow: hidden; font-family: 'Nunito', 'Roboto', sans-serif;
+            background-color: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface);
+            touch-action: manipulation; -webkit-font-smoothing: antialiased;
+            display: flex; justify-content: center; align-items: center;
+            transition: background-color 0.4s ease, color 0.4s ease; position: relative;
+        }
+
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            background-size: 256px 256px; transition: opacity 0.4s ease;
+        }
+        body.dark .noise-overlay { opacity: 1; }
+
+        .app-container {
+            width: 100%; max-width: 440px; height: 100%; max-height: 900px;
+            display: flex; flex-direction: column; padding: 20px 20px 28px; gap: 20px;
+            position: relative; z-index: 1;
+        }
+
+        .top-card {
+            background-color: var(--md-sys-color-surface-container-low); border-radius: var(--md-sys-shape-corner-extra-large);
+            padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;
+            box-shadow: var(--md-sys-elevation-1); flex-shrink: 0; position: relative; overflow: hidden;
+            transition: background-color 0.4s ease, box-shadow 0.4s ease;
+        }
+        .top-card-title {
+            font-family: 'Zen Old Mincho', serif; font-size: 1.8rem; font-weight: 600;
+            color: var(--md-sys-color-on-surface); letter-spacing: 0.02em; line-height: 1.2;
+        }
+        .top-actions { display: flex; gap: 8px; }
+        .icon-btn {
+            width: 44px; height: 44px; border-radius: 22px; border: none;
+            background: var(--md-sys-color-surface-container-highest); cursor: pointer; display: flex;
+            align-items: center; justify-content: center; color: var(--md-sys-color-on-surface-variant);
+            transition: background-color 0.4s var(--md-sys-motion-easing-emphasized), color 0.4s var(--md-sys-motion-easing-emphasized), transform 0.4s var(--md-sys-motion-easing-emphasized); 
+            position: relative; overflow: hidden;
+        }
+        .icon-btn:active { background: var(--md-sys-color-primary-container); transform: scale(0.9); }
+        .icon-btn svg { width: 22px; height: 22px; }
+
+        .mode-cards { 
+            display: flex; flex-shrink: 0; position: relative; padding: 6px;
+            background-color: var(--md-sys-color-surface-container-high); border-radius: 36px;
+            box-shadow: inset 0px 3px 6px rgba(0,0,0,0.06); z-index: 1; transition: background-color 0.4s ease, box-shadow 0.4s ease;
+        }
+        body.dark .mode-cards { box-shadow: inset 0px 3px 8px rgba(0,0,0,0.3); }
+
+        .mode-indicator {
+            position: absolute; top: 6px; bottom: 6px; left: 0; width: 33.33%; border-radius: 30px;
+            background-color: var(--md-sys-color-primary-container); box-shadow: var(--md-sys-elevation-1); z-index: 0;
+            transition: transform 0.6s var(--md-sys-motion-easing-emphasized), width 0.6s var(--md-sys-motion-easing-emphasized), background-color 0.4s ease;
+        }
+
+        .mode-card {
+            flex: 1; padding: 14px 4px; background: transparent; border: none; font-family: inherit;
+            font-size: 0.95rem; font-weight: 600; color: var(--md-sys-color-on-surface-variant); cursor: pointer; 
+            text-align: center; letter-spacing: 0.01em; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; gap: 6px; position: relative; z-index: 1; transition: color 0.4s ease, transform 0.3s ease;
+        }
+        .mode-card.active { color: var(--md-sys-color-on-primary-container); }
+        .mode-card:active { transform: scale(0.92); }
+        .mode-card.disabled { opacity: 0.5; pointer-events: none; }
+        .mode-icon { width: 28px; height: 28px; fill: currentColor; opacity: 0.9; transition: opacity 0.4s ease; }
+        .mode-card.active .mode-icon { opacity: 1; }
+
+        .timer-card {
+            flex: 1; background-color: var(--md-sys-color-surface-container-low); border-radius: var(--md-sys-shape-corner-extra-large); 
+            box-shadow: var(--md-sys-elevation-2); display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 24px 16px; gap: 16px; min-height: 0; position: relative; transition: background-color 0.4s ease; overflow: hidden;
+        }
+
+        .progress-container { 
+            position: relative; width: min(68vw, 260px); height: min(68vw, 260px); 
+            flex-shrink: 0; border-radius: 50%; 
+            transition: transform 0.8s var(--md-sys-motion-easing-spring); 
+        }
+        /* 修正后的居中形变补偿 */
+        .progress-container.running { transform: translateY(12px) scale(1.06); }
+        
+        .progress-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+        .progress-ring .track { fill: none; stroke: var(--md-sys-color-surface-container-highest); stroke-width: 14; transition: stroke 0.4s ease; }
+        .progress-ring .progress {
+            fill: none; stroke: var(--md-sys-color-primary); stroke-width: 14; stroke-linecap: round;
+            transition: stroke-dashoffset var(--anim-speed) linear, stroke 0.5s ease;
+        }
+        .progress-ring .progress-tail { fill: none; stroke: url(#tailGradient); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset var(--anim-speed) linear;}
+        .progress-ring .progress.warning { stroke: var(--md-sys-color-tertiary); }
+        .progress-ring .progress.urgent { stroke: var(--md-sys-color-error); }
+
+                /* 恢复 pointer-events: auto 让数字可点击 */
+        .time-display-wrapper { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); 
+            display: flex; flex-direction: column; align-items: center; 
+            gap: 16px; /* 增大间距，为虚线下划线腾出物理渲染空间，同时也增强呼吸感 */
+            pointer-events: auto; z-index: 10;
+        }
+
+        
+        .time-display {
+            font-size: clamp(3.2rem, 11vw, 4.8rem); 
+            font-family: 'Roboto Flex', 'Inter', monospace;
+            font-variation-settings: "wght" 700, "wdth" 100;
+            color: var(--md-sys-color-on-surface); 
+            line-height: 1; font-variant-numeric: tabular-nums; 
+            transition: color 0.4s ease, font-variation-settings 0.2s linear, text-decoration 0.3s ease;
+        }
+        .time-display.warning { color: var(--md-sys-color-tertiary); } 
+        .time-display.urgent { color: var(--md-sys-color-error); }
+        
+        /* 待机态下的可编辑虚线提示 */
+        .time-display.editable {
+            text-decoration: underline;
+            text-decoration-style: dashed;
+            text-decoration-color: var(--md-sys-color-outline-variant);
+            text-underline-offset: 8px; /* 稍微收紧虚线与数字的距离，使其视觉上更像一个输入组件 */
+            text-decoration-thickness: 3px;
+            cursor: pointer;
+            border-radius: 12px;
+        }
+        .time-display.editable:active { opacity: 0.6; }
+
+        /* 输入态的极简表单样式 */
+        .time-display-input {
+            width: 4em;
+            background: transparent;
+            border: none;
+            color: var(--md-sys-color-primary);
+            font-family: 'Roboto Flex', 'Inter', monospace;
+            font-size: clamp(3.2rem, 11vw, 4.8rem);
+            font-weight: 800;
+            text-align: center;
+            outline: none;
+            padding: 0;
+            line-height: 1;
+            letter-spacing: -0.04em;
+            border-bottom: 3px dashed var(--md-sys-color-primary);
+        }
+        
+        .time-label {
+            font-size: 0.85rem; font-weight: 600; color: var(--md-sys-color-on-surface-variant); pointer-events: none;
+            letter-spacing: 0.04em; text-transform: uppercase; background: var(--md-sys-color-surface-container-highest);
+            padding: 4px 16px; border-radius: var(--md-sys-shape-corner-full); transition: background 0.4s ease;
+        }
+
+        .controls-card {
+            background-color: var(--md-sys-color-surface-container-high); border-radius: 36px;
+            padding: 8px 12px; display: inline-flex; align-items: center; align-self: center; justify-content: center; gap: 12px; flex-shrink: 0; 
+            box-shadow: var(--md-sys-elevation-2); transition: background-color 0.4s ease, box-shadow 0.4s ease, gap 0.6s var(--md-sys-motion-easing-spring), padding 0.6s var(--md-sys-motion-easing-spring);
+        }
+        .controls-card.running { gap: 24px; padding: 8px 16px; }
+        
+        .fab-primary {
+            width: 80px; height: 80px; border-radius: 40px; border: none;
+            background-color: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
+            cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--md-sys-elevation-3);
+            transition: border-radius 0.6s var(--md-sys-motion-easing-spring), background-color 0.6s cubic-bezier(0.2, 0, 0, 1), transform 0.4s var(--md-sys-motion-easing-spring), box-shadow 0.4s ease;
+            position: relative; overflow: hidden; flex-shrink: 0; z-index: 2;
+        }
+        .fab-primary svg { width: 36px; height: 36px; pointer-events: none; position: relative; z-index: 2; transition: transform 0.4s ease;}
+        .fab-primary.running { border-radius: 24px; background-color: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); box-shadow: var(--md-sys-elevation-1); }
+        .fab-primary.running svg { transform: scale(0.9); }
+        .fab-primary.bounce { animation: fabBounce 0.5s var(--md-sys-motion-easing-spring); }
+        @keyframes fabBounce { 0% { transform: scale(1); } 40% { transform: scale(0.85); } 100% { transform: scale(1); } }
+
+        /* M3 控件物理形变动画核心 */
+        .btn-filled.btn-stateful {
+            max-width: 54px; width: 54px; height: 48px; border-radius: 24px; border: none; background: transparent; color: var(--md-sys-color-on-surface-variant);
+            cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center;
+            transition: max-width 0.4s var(--md-sys-motion-easing-spring), background-color 0.3s ease, opacity 0.3s ease, transform 0.4s var(--md-sys-motion-easing-spring), margin 0.4s ease; 
+            position: relative; overflow: hidden;
+        }
+        /* 运行或中途暂停状态：加减号收起 */
+        .controls-card:not(.pristine) .btn-idle {
+            max-width: 0; opacity: 0; margin: 0; transform: scale(0) rotate(-45deg); pointer-events: none;
+        }
+        /* 纯净待机状态：重置跳过号收起 */
+        .controls-card.pristine .btn-running {
+            max-width: 0; opacity: 0; margin: 0; transform: scale(0) rotate(45deg); pointer-events: none;
+        }
+        
+        .controls-card.running .btn-filled.btn-stateful { transform: scale(0.85); border-radius: 16px; opacity: 0.6; }
+        .btn-filled:active { background: var(--md-sys-color-surface-variant); transform: scale(0.9); }
+        .btn-filled svg { width: 22px; height: 22px; }
+
+        .session-card-btn {
+            background-color: var(--md-sys-color-surface-container-low); border-radius: 28px; padding: 16px 24px; 
+            display: flex; align-items: center; justify-content: center; gap: 10px; flex-shrink: 0; 
+            box-shadow: var(--md-sys-elevation-1); border: none; cursor: pointer; color: var(--md-sys-color-on-surface-variant);
+            transition: background-color 0.4s ease, color 0.4s ease, transform 0.4s var(--md-sys-motion-easing-spring), border-radius 0.4s var(--md-sys-motion-easing-spring);
+            width: 100%; font-family: inherit; position: relative; overflow: hidden;
+        }
+        .session-card-btn:active { transform: scale(0.96); border-radius: 16px; background-color: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-primary); }
+        .session-card-btn svg { width: 22px; height: 22px; }
+        .session-card-btn .session-label { font-weight: 700; font-size: 0.95rem; letter-spacing: 0.02em; }
+
+        .toast {
+            position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%) translateY(120px);
+            background-color: var(--md-sys-color-inverse-surface); color: var(--md-sys-color-inverse-on-surface);
+            padding: 14px 28px; border-radius: var(--md-sys-shape-corner-full); font-size: 0.95rem; font-weight: 600;
+            letter-spacing: 0.02em; z-index: 100; pointer-events: none; transition: transform 0.6s var(--md-sys-motion-easing-emphasized);
+            box-shadow: var(--md-sys-elevation-3); text-align: center; white-space: nowrap; max-width: 85vw;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(196,74,60,0.4); } 50% { box-shadow: 0 0 0 32px rgba(196,74,60,0); } 100% { box-shadow: 0 0 0 0 rgba(196,74,60,0); } }
+        .progress-container.completed-anim { animation: pulse-ring 1.5s ease-out; }
+
+        .ripple { position: absolute; border-radius: 50%; background: rgba(var(--md-sys-color-on-primary-container), 0.2); transform: scale(0); animation: ripple-effect 0.6s ease-out; pointer-events: none; z-index: 1; }
+        @keyframes ripple-effect { to { transform: scale(4); opacity: 0; } }
+
+        /* ======== 底部设置面板 ======== */
+        .settings-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3); z-index: 200; opacity: 0; visibility: hidden; 
+            backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
+            transition: opacity 0.4s ease, visibility 0.4s, backdrop-filter 0.6s ease, -webkit-backdrop-filter 0.6s ease;
+        }
+        .settings-overlay.active { opacity: 1; visibility: visible; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .bottom-sheet {
+            position: fixed; bottom: 0; left: 50%; width: 100%; max-width: 440px;
+            background: var(--md-sys-color-surface-container-low); border-radius: 48px 48px 0 0;
+            padding: 24px 24px 40px; box-shadow: 0px -8px 24px rgba(0,0,0,0.1);
+            transform: translate(-50%, calc(100% + 30px)); 
+            transition: transform 0.6s var(--md-sys-motion-easing-emphasized), background-color 0.4s ease, border-radius 0.6s var(--md-sys-motion-easing-emphasized);
+            z-index: 201;
+        }
+        .bottom-sheet.active { transform: translate(-50%, 0); border-radius: 28px 28px 0 0; }
+        .sheet-handle { width: 40px; height: 4px; background: var(--md-sys-color-outline-variant); border-radius: 2px; margin: 0 auto 20px; }
+        .sheet-title { font-family: 'Zen Old Mincho', serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 24px; color: var(--md-sys-color-on-surface); }
+        
+        .setting-group { display: flex; flex-direction: column; gap: 24px; }
+        .setting-row { display: flex; align-items: center; justify-content: space-between; }
+        .setting-label-wrap { display: flex; align-items: center; gap: 12px; }
+        .setting-icon { width: 22px; height: 22px; color: var(--md-sys-color-on-surface-variant); opacity: 0.8; }
+        .setting-label { font-weight: 600; color: var(--md-sys-color-on-surface-variant); font-size: 0.95rem; }
+        
+        .lang-segment {
+            display: flex; background: var(--md-sys-color-surface-container-highest); border-radius: 20px; padding: 4px; gap: 4px; 
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); position: relative; z-index: 1;
+        }
+        .lang-indicator {
+            position: absolute; top: 4px; bottom: 4px; left: 0; width: 33.33%; border-radius: 16px;
+            background-color: var(--md-sys-color-primary-container); box-shadow: var(--md-sys-elevation-1); z-index: 0;
+            transition: transform 0.5s var(--md-sys-motion-easing-emphasized), width 0.5s var(--md-sys-motion-easing-emphasized);
+        }
+        .lang-btn {
+            flex: 1; border: none; background: transparent; padding: 6px 14px; border-radius: 16px;
+            font-weight: 700; font-size: 0.85rem; color: var(--md-sys-color-on-surface-variant); cursor: pointer; 
+            transition: color 0.3s ease, transform 0.2s var(--md-sys-motion-easing-emphasized); -webkit-tap-highlight-color: transparent; position: relative; z-index: 1; text-align: center;
+        }
+        .lang-btn.active { color: var(--md-sys-color-on-primary-container); }
+        .lang-btn:active { transform: scale(0.9); }
+
+        input[type="range"] {
+            -webkit-appearance: none; appearance: none; width: 140px; height: 16px; border-radius: 16px; outline: none; cursor: pointer;
+            background: linear-gradient(to right, var(--md-sys-color-primary) var(--slider-fill, 50%), var(--md-sys-color-surface-container-highest) var(--slider-fill, 50%));
+            transition: transform 0.3s var(--md-sys-motion-easing-spring);
+        }
+        input[type="range"]:active { transform: scale(1.02); }
+        input[type="range"]::-webkit-slider-runnable-track { height: 16px; border-radius: 16px; background: transparent; }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 12px; 
+            background: var(--md-sys-color-surface-container-lowest); border: 5px solid var(--md-sys-color-primary); 
+            margin-top: -4px; box-shadow: var(--md-sys-elevation-1);
+            transition: transform 0.4s var(--md-sys-motion-easing-spring), border-width 0.3s var(--md-sys-motion-easing-spring);
+        }
+        input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.2); border-width: 8px; }
+
+        /* ======== 全局文本滑动动效 ======== */
+        .slide-out-left { animation: slideOutL 0.25s cubic-bezier(0.2, 0, 0, 1) forwards; display: inline-block; }
+        .slide-in-right { animation: slideInR 0.35s cubic-bezier(0.2, 0, 0, 1) forwards; display: inline-block; }
+        .slide-out-right { animation: slideOutR 0.25s cubic-bezier(0.2, 0, 0, 1) forwards; display: inline-block; }
+        .slide-in-left { animation: slideInL 0.35s cubic-bezier(0.2, 0, 0, 1) forwards; display: inline-block; }
+        @keyframes slideOutL { to { transform: translateX(-15px); opacity: 0; filter: blur(2px); } }
+        @keyframes slideInR { from { transform: translateX(15px); opacity: 0; filter: blur(2px); } to { transform: translateX(0); opacity: 1; filter: blur(0); } }
+        @keyframes slideOutR { to { transform: translateX(15px); opacity: 0; filter: blur(2px); } }
+        @keyframes slideInL { from { transform: translateX(-15px); opacity: 0; filter: blur(2px); } to { transform: translateX(0); opacity: 1; filter: blur(0); } }
+
+        /* ======== 统计记录底栏 (Container Transform) ======== */
+        .stats-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 300; opacity: 0; visibility: hidden; 
+            backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
+            transition: opacity 0.5s ease, visibility 0.5s, backdrop-filter 0.5s ease, -webkit-backdrop-filter 0.5s ease;
+        }
+        .stats-overlay.active { opacity: 1; visibility: visible; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        
+        .stats-sheet {
+            position: fixed; bottom: 0; left: 50%; width: 100%; max-width: 440px; 
+            height: 66vh; background: var(--md-sys-color-surface-container-low); 
+            border-radius: 48px 48px 0 0; padding: 24px 24px 40px; 
+            box-shadow: 0px -16px 32px rgba(0,0,0,0.15);
+            transform: translate(-50%, calc(100% + 50px)); 
+            transition: transform 0.6s var(--md-sys-motion-easing-emphasized), border-radius 0.6s var(--md-sys-motion-easing-emphasized);
+            z-index: 301; display: flex; flex-direction: column;
+        }
+        .stats-sheet.active { transform: translate(-50%, 0); border-radius: 28px 28px 0 0; }
+        
+        .stats-list { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding-top: 8px; flex: 1; }
+        
+        .stat-card {
+            background: var(--md-sys-color-surface-container-highest); border-radius: 24px;
+            padding: 20px; display: flex; align-items: center; gap: 16px; flex-shrink: 0;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.2); 
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        body.dark .stat-card { box-shadow: inset 0 2px 4px rgba(255,255,255,0.02); }
+        .stat-card:active { transform: scale(0.98); background: var(--md-sys-color-surface-variant); }
+        
+        .stat-icon-wrap {
+            width: 48px; height: 48px; border-radius: 16px; background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container); display: flex; align-items: center; justify-content: center;
+        }
+        .stat-icon-wrap svg { width: 26px; height: 26px; }
+        .stat-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+        .stat-name { font-size: 0.95rem; font-weight: 700; color: var(--md-sys-color-on-surface); }
+        .stat-data { display: flex; align-items: baseline; gap: 6px; }
+        .stat-val { font-size: 1.15rem; font-weight: 800; color: var(--md-sys-color-primary); font-family: 'Roboto Flex', 'Inter', monospace; }
+        .stat-unit { font-size: 0.8rem; font-weight: 600; color: var(--md-sys-color-on-surface-variant); }
+
+        @media (max-width: 360px) {
+            .app-container { padding: 14px 14px 20px; gap: 14px; }
+            .mode-card { padding: 12px 4px; font-size: 0.8rem; }
+            .fab-primary { width: 68px; height: 68px; border-radius: 34px;}
+            .fab-primary svg { width: 30px; height: 30px; }
+            .time-display { font-size: clamp(2.6rem, 9.5vw, 3.6rem); }
+        }
+    </style>
+</head>
+<script>
+        // 注册 Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('SW 注册成功:', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('SW 注册失败:', err);
+                    });
+            });
+        }
+    </script>
+<body>
+    <div class="noise-overlay"></div>
+    <div class="app-container">
+        <div class="top-card">
+            <span class="top-card-title">番茄鐘</span>
+            <div class="top-actions">
+                <button class="icon-btn" id="themeToggle" aria-label="切换主题">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                </button>
+                <button class="icon-btn" id="settingsToggle" aria-label="设置">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="mode-cards" id="modeCards">
+            <div class="mode-indicator" id="modeIndicator"></div>
+
+            <button class="mode-card active" data-mode="work">
+                <svg aria-hidden="true" class="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span>工作</span>
+            </button>
+            <button class="mode-card" data-mode="shortBreak">
+                <svg aria-hidden="true" class="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                <span>短休息</span>
+            </button>
+            <button class="mode-card" data-mode="longBreak">
+                <svg aria-hidden="true" class="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <span>长休息</span>
+            </button>
+        </div>
+
+        <div class="timer-card">
+            <div class="progress-container" id="progressContainer">
+                <svg class="progress-ring" viewBox="0 0 300 300">
+                    <defs>
+                        <linearGradient id="tailGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="var(--md-sys-color-primary)" stop-opacity="0.9"/>
+                            <stop offset="100%" stop-color="var(--md-sys-color-primary)" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                    <circle class="track" cx="150" cy="150" r="126"/>
+                    <circle class="progress" id="progressCircle" cx="150" cy="150" r="126" stroke-dasharray="791.68" stroke-dashoffset="791.68"/>
+                    <circle class="progress-tail" id="progressTail" cx="150" cy="150" r="126" stroke-dasharray="30 791.68" stroke-dashoffset="791.68"/>
+                </svg>
+                <div class="time-display-wrapper">
+                    <span class="time-display editable" id="timeDisplay" aria-label="点击编辑时间">25:00</span>
+                    <span class="time-label" id="timeLabel">工作</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-card pristine" id="controlsCard">
+            <button class="btn-filled btn-stateful btn-idle" id="adjustMinusBtn" aria-label="减少1分钟">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+            
+            <button class="btn-filled btn-stateful btn-running" id="resetBtn" aria-label="重置">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            </button>
+
+            <button class="fab-primary" id="fabPlay" aria-label="开始/暂停">
+                <svg aria-hidden="true" id="playIcon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>
+                <svg aria-hidden="true" id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="5" y="3" width="5" height="18" rx="1.8"/><rect x="14" y="3" width="5" height="18" rx="1.8"/></svg>
+            </button>
+
+            <button class="btn-filled btn-stateful btn-running" id="skipBtn" aria-label="跳过">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+            </button>
+
+            <button class="btn-filled btn-stateful btn-idle" id="adjustPlusBtn" aria-label="增加1分钟">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+        </div>
+
+        <button class="session-card-btn" id="statsEntryBtn">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 9l-5 5-3-3-4 4"/></svg>
+            <span class="session-label" id="labelStatsEntry">记录统计</span>
+        </button>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="settings-overlay" id="settingsOverlay"></div>
+    <div class="bottom-sheet" id="bottomSheet">
+        <div class="sheet-handle"></div>
+        <h2 class="sheet-title" id="labelSettingsTitle">设置</h2>
+        <div class="setting-group">
+            <div class="setting-row">
+                <div class="setting-label-wrap">
+                    <svg class="setting-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    <span class="setting-label" id="labelLang">语言</span>
+                </div>
+                <div class="lang-segment" id="langSegment">
+                    <div class="lang-indicator" id="langIndicator"></div>
+                    <button class="lang-btn active" data-lang="0">中</button>
+                    <button class="lang-btn" data-lang="1">EN</button>
+                    <button class="lang-btn" data-lang="2">あ</button>
+                </div>
+            </div>
+            <div class="setting-row">
+                <div class="setting-label-wrap">
+                    <svg class="setting-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path></svg>
+                    <span class="setting-label" id="labelVibrate">振动强度</span>
+                </div>
+                <input type="range" id="vibrateSlider" min="0" max="100" value="80">
+            </div>
+            <div class="setting-row">
+                <div class="setting-label-wrap">
+                    <svg class="setting-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    <span class="setting-label" id="labelAnim">动画速度</span>
+                </div>
+                <input type="range" id="animSlider" min="0" max="100" value="70">
+            </div>
+            <div class="setting-row">
+                <div class="setting-label-wrap">
+                    <svg class="setting-icon" id="iconVolume" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path class="vol-wave vol-low" d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path class="vol-wave vol-high" d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                    <span class="setting-label" id="labelVolume">提示音音量</span>
+                </div>
+                <input type="range" id="volumeSlider" min="0" max="100" value="75">
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-overlay" id="statsOverlay"></div>
+    <div class="stats-sheet" id="statsSheet">
+        <div class="sheet-handle"></div>
+        <h2 class="sheet-title" id="labelStatsTitle">使用記錄與統計</h2>
+        <div class="stats-list">
+            <div class="stat-card">
+                <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+                <div class="stat-info">
+                    <div class="stat-name" id="statWorkLabel">工作</div>
+                    <div class="stat-data">
+                        <span class="stat-val" id="statWorkCount">0</span><span class="stat-unit" id="statWorkCountUnit">次</span> / 
+                        <span class="stat-val" id="statWorkTime">0</span><span class="stat-unit" id="statWorkTimeUnit">分钟</span>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+                <div class="stat-info">
+                    <div class="stat-name" id="statShortBreakLabel">短休息</div>
+                    <div class="stat-data">
+                        <span class="stat-val" id="statShortBreakCount">0</span><span class="stat-unit" id="statShortBreakCountUnit">次</span> / 
+                        <span class="stat-val" id="statShortBreakTime">0</span><span class="stat-unit" id="statShortBreakTimeUnit">分钟</span>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+                <div class="stat-info">
+                    <div class="stat-name" id="statLongBreakLabel">长休息</div>
+                    <div class="stat-data">
+                        <span class="stat-val" id="statLongBreakCount">0</span><span class="stat-unit" id="statLongBreakCountUnit">次</span> / 
+                        <span class="stat-val" id="statLongBreakTime">0</span><span class="stat-unit" id="statLongBreakTimeUnit">分钟</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const timeDisplay = document.getElementById('timeDisplay');
+            const timeLabel = document.getElementById('timeLabel');
+            const progressCircle = document.getElementById('progressCircle');
+            const progressTail = document.getElementById('progressTail');
+            const progressContainer = document.getElementById('progressContainer');
+            
+            const controlsCard = document.getElementById('controlsCard');
+            const fabPlay = document.getElementById('fabPlay');
+            const playIcon = document.getElementById('playIcon');
+            const pauseIcon = document.getElementById('pauseIcon');
+            const adjustMinusBtn = document.getElementById('adjustMinusBtn');
+            const adjustPlusBtn = document.getElementById('adjustPlusBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const skipBtn = document.getElementById('skipBtn');
+
+            const modeCards = document.querySelectorAll('#modeCards .mode-card');
+            const modeIndicator = document.getElementById('modeIndicator');
+            const toast = document.getElementById('toast');
+            
+            const themeToggle = document.getElementById('themeToggle');
+            const settingsToggle = document.getElementById('settingsToggle');
+            const settingsOverlay = document.getElementById('settingsOverlay');
+            const bottomSheet = document.getElementById('bottomSheet');
+            
+            const langBtns = document.querySelectorAll('.lang-btn');
+            const vibrateSlider = document.getElementById('vibrateSlider');
+            const animSlider = document.getElementById('animSlider');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const iconVolume = document.getElementById('iconVolume');
+            const volLow = iconVolume.querySelector('.vol-low');
+            const volHigh = iconVolume.querySelector('.vol-high');
+
+            const statsEntryBtn = document.getElementById('statsEntryBtn');
+            const statsOverlay = document.getElementById('statsOverlay');
+            const statsSheet = document.getElementById('statsSheet');
+
+            const CIRCUMFERENCE = 2 * Math.PI * 126;
+            const MAX_SESSIONS = 4;
+            
+            const i18n = {
+                zh: { title: '番茄鐘', work: '工作', shortBreak: '短休息', longBreak: '长休息', settings: '设置', vibrate: '振动强度', animSpeed: '动画速度', volume: '提示音音量', language: '语言', toastWorkDone: '工作完成！休息一下吧。', toastBreakDone: '休息结束，开始工作吧。', statsEntry: '记录统计', statsTitle: '使用記錄與統計', times: '次', hours: '小时', mins: '分钟' },
+                en: { title: 'Pomodoro', work: 'Focus', shortBreak: 'Short Break', longBreak: 'Long Break', settings: 'Settings', vibrate: 'Haptics', animSpeed: 'Animation Speed', volume: 'Volume', language: 'Language', toastWorkDone: 'Focus done! Take a break.', toastBreakDone: 'Break over, let\'s focus.', statsEntry: 'Stats', statsTitle: 'Usage Statistics', times: 'times', hours: 'h', mins: 'min' },
+                ja: { title: 'ポモドーロ', work: '集中', shortBreak: '小休憩', longBreak: '長休憩', settings: '設定', vibrate: 'バイブレーション', animSpeed: 'アニメーション速度', volume: '音量', language: '言語', toastWorkDone: '集中完了！少し休みましょう。', toastBreakDone: '休憩終了！集中に戻りましょう。', statsEntry: '統計データ', statsTitle: '利用記録と統計', times: '回', hours: '時間', mins: '分' }
+            };
+
+            let appData = {
+                durations: { work: 25*60, shortBreak: 5*60, longBreak: 15*60 },
+                isDarkTheme: false,
+                settings: { vibrate: 80, anim: 70, volume: 75, lang: 0 },
+                history: {
+                    work: { count: 0, seconds: 0 },
+                    shortBreak: { count: 0, seconds: 0 },
+                    longBreak: { count: 0, seconds: 0 }
+                }
+            };
+
+            let currentMode = 'work';
+            let remainingSeconds = 0, totalSeconds = 0;
+            let isRunning = false, rAF_id = null, startTimestamp = null, elapsedBeforePause = 0;
+            let cycleCount = 0;
+            let autoStartNext = false;
+            let toastTimeout = null;
+            let audioCtx = null, lastSecondVibrate = -1, prevRemaining = -1;
+            let wakeLock = null;
+
+            function getLangStr() { return ['zh', 'en', 'ja'][appData.settings.lang] || 'zh'; }
+            function getT() { return i18n[getLangStr()]; }
+
+            function updateLangIndicator() {
+                const activeBtn = document.querySelector('.lang-btn.active');
+                const container = document.getElementById('langSegment');
+                const indicator = document.getElementById('langIndicator');
+                if (!activeBtn || !container || !indicator) return;
+                const containerRect = container.getBoundingClientRect();
+                const btnRect = activeBtn.getBoundingClientRect();
+                indicator.style.width = `${btnRect.width}px`;
+                indicator.style.transform = `translateX(${btnRect.left - containerRect.left}px)`;
+            }
+
+            function applyLanguage(direction = null) {
+    const t = getT();
+    const textElements = [
+        { el: document.querySelector('.top-card-title'), text: t.title },
+        { el: document.querySelector('[data-mode="work"] span'), text: t.work },
+        { el: document.querySelector('[data-mode="shortBreak"] span'), text: t.shortBreak },
+        { el: document.querySelector('[data-mode="longBreak"] span'), text: t.longBreak },
+        { el: timeLabel, text: t[currentMode] },
+        { el: document.getElementById('labelSettingsTitle'), text: t.settings },
+        { el: document.getElementById('labelLang'), text: t.language },
+        { el: document.getElementById('labelVibrate'), text: t.vibrate },
+        { el: document.getElementById('labelAnim'), text: t.animSpeed },
+        { el: document.getElementById('labelVolume'), text: t.volume },
+        { el: document.getElementById('labelStatsEntry'), text: t.statsEntry },
+        { el: document.getElementById('labelStatsTitle'), text: t.statsTitle },
+        { el: document.getElementById('statWorkLabel'), text: t.work },
+        { el: document.getElementById('statShortBreakLabel'), text: t.shortBreak },
+        { el: document.getElementById('statLongBreakLabel'), text: t.longBreak },
+        { el: document.getElementById('statWorkCountUnit'), text: t.times },
+        { el: document.getElementById('statShortBreakCountUnit'), text: t.times },
+        { el: document.getElementById('statLongBreakCountUnit'), text: t.times }
+    ];
+
+    langBtns.forEach(btn => { btn.classList.toggle('active', parseInt(btn.dataset.lang) === appData.settings.lang); });
+
+    if (direction) {
+        const outClass = direction === 'left' ? 'slide-out-left' : 'slide-out-right';
+        const inClass = direction === 'left' ? 'slide-in-right' : 'slide-in-left';
+
+        textElements.forEach(item => {
+            item.el.classList.remove('slide-in-left', 'slide-in-right');
+            item.el.classList.add(outClass);
+        });
+
+        setTimeout(() => {
+            textElements.forEach(item => {
+                item.el.textContent = item.text;
+                item.el.classList.remove(outClass);
+                item.el.classList.add(inClass);
+            });
+            updateStatsUI();
+            // 文本更新后再调整指示器位置
+            requestAnimationFrame(() => {
+                updateLangIndicator();
+                updateIndicatorPosition();
+            });
+            setTimeout(() => { textElements.forEach(item => item.el.classList.remove(inClass)); }, 350);
+        }, 200); 
+    } else {
+        textElements.forEach(item => item.el.textContent = item.text);
+        updateStatsUI();
+        // 非动画切换时也更新指示器
+        requestAnimationFrame(() => {
+            updateLangIndicator();
+            updateIndicatorPosition();
+        });
+    }
+}
+
+            function updateStatsUI() {
+                const t = getT();
+                ['work', 'shortBreak', 'longBreak'].forEach(mode => {
+                    const data = appData.history[mode];
+                    const elCount = document.getElementById(`stat${mode.charAt(0).toUpperCase() + mode.slice(1)}Count`);
+                    const elTime = document.getElementById(`stat${mode.charAt(0).toUpperCase() + mode.slice(1)}Time`);
+                    const elTimeUnit = document.getElementById(`stat${mode.charAt(0).toUpperCase() + mode.slice(1)}TimeUnit`);
+                    
+                    if (elCount && elTime && elTimeUnit) {
+                        elCount.textContent = data.count;
+                        if (data.seconds < 3600) {
+                            elTime.textContent = Math.round(data.seconds / 60);
+                            elTimeUnit.textContent = t.mins;
+                        } else {
+                            elTime.textContent = (data.seconds / 3600).toFixed(1);
+                            elTimeUnit.textContent = t.hours;
+                        }
+                    }
+                });
+            }
+
+            function loadData() {
+                const saved = localStorage.getItem('pomodoroAppData');
+                if (saved) {
+                    try { 
+                        const parsed = JSON.parse(saved);
+// 只扩展顶层非对象字段，子对象单独安全合并
+if (parsed.isDarkTheme !== undefined) appData.isDarkTheme = parsed.isDarkTheme;
+if (parsed.settings) {
+    appData.settings = { ...appData.settings, ...parsed.settings };
+}
+if (parsed.durations) {
+    appData.durations = { ...appData.durations, ...parsed.durations };
+}
+if (parsed.history) {
+    appData.history = { ...appData.history, ...parsed.history };
+}
+                    } catch(e) { console.error("读取存档失败", e); }
+                }
+                
+                document.body.classList.toggle('dark', appData.isDarkTheme);
+                vibrateSlider.value = appData.settings.vibrate;
+                animSlider.value = appData.settings.anim;
+                volumeSlider.value = appData.settings.volume;
+updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
+
+[vibrateSlider, animSlider, volumeSlider].forEach(updateSliderFill);
+                
+                applyAnimSpeed();
+                applyLanguage();
+                switchMode('work');
+                
+                requestAnimationFrame(updateIndicatorPosition);
+            }
+
+            function saveData() { localStorage.setItem('pomodoroAppData', JSON.stringify(appData)); }
+
+            function updateSliderFill(slider) {
+                const min = slider.min || 0;
+                const max = slider.max || 100;
+                const percent = ((slider.value - min) / (max - min)) * 100;
+                slider.style.setProperty('--slider-fill', `${percent}%`);
+            }
+
+            function getAudioContext() { if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+            function playTone(freq, dur, type='sine') { 
+                try { 
+                    const ctx = getAudioContext(); 
+                    if(ctx.state === 'suspended') ctx.resume().catch(e => {}); 
+                    const volScale = appData.settings.volume / 100;
+                    if(volScale === 0) return; 
+                    const o = ctx.createOscillator(); const g = ctx.createGain(); 
+                    o.type = type; o.frequency.setValueAtTime(freq, ctx.currentTime); 
+                    g.gain.setValueAtTime(0.3 * volScale, ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur); 
+                    o.connect(g); g.connect(ctx.destination); 
+                    o.start(ctx.currentTime); o.stop(ctx.currentTime + dur); 
+                } catch(e){} 
+            }
+
+            function playTickSound() { playTone(600, 0.015, 'triangle'); vibrate([8]); }
+            function playStartSound() { const dur = 0.2; playTone(880.00, dur); setTimeout(() => playTone(1108.73, dur), 100); }
+            function playCompletionSound() { playTone(523.25, 0.3); setTimeout(() => playTone(659.25, 0.3), 150); setTimeout(() => playTone(783.99, 0.3), 300); setTimeout(() => playTone(1046.50, 0.55), 450); }
+            function playResetSound() { const dur = 0.2; playTone(1318.51, dur); playTone(698.46, dur); setTimeout(() => { playTone(1174.66, dur); playTone(698.46, dur); }, 100); setTimeout(() => { playTone(1567.98, dur); playTone(698.46, dur); }, 200); }
+            
+            function vibrate(p) { 
+                if(!navigator.vibrate || appData.settings.vibrate == 0) return; 
+                const scale = appData.settings.vibrate / 100;
+                if (Array.isArray(p)) { navigator.vibrate(p.map(v => Math.round(v * scale))); } else { navigator.vibrate(Math.round(p * scale)); }
+            }
+
+            function vibrateTap() { vibrate([8, 20]); }              
+            function vibrateConfirm() { vibrate([15, 30]); }         
+            function vibrateCancel() { vibrate([12]); }              
+            function vibrateReset() { vibrate([18, 25]); }           
+            function vibrateSkip() { vibrate([18, 25, 18]); }        
+            function vibrateLongPress() { vibrate([12, 18, 12, 18]); } 
+            function vibrateWarning() { vibrate([10]); }             
+            function vibrateTest() { vibrate([10, 15, 10]); }        
+            function vibrateComplete() { vibrate([80, 70, 80, 70, 180]); }
+
+            async function requestWakeLock() { try { if ('wakeLock' in navigator) { wakeLock = await navigator.wakeLock.request('screen'); } } catch (err) {} }
+            function releaseWakeLock() { if (wakeLock !== null) { wakeLock.release().then(() => wakeLock = null); } }
+
+            function showToast(m) { if(toastTimeout) clearTimeout(toastTimeout); toast.textContent=m; toast.classList.add('show'); toastTimeout=setTimeout(()=>toast.classList.remove('show'),2200); }
+            function formatTime(s) { const m=Math.floor(s/60), sec=Math.floor(s%60); return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'); }
+
+            function updateDisplay() {
+                const formattedTime = formatTime(remainingSeconds);
+                // 更新时如果是输入框形态，则不覆盖它
+                if (timeDisplay.style.display !== 'none') {
+                    timeDisplay.textContent = formattedTime;
+                }
+                document.title = `${formattedTime} · ${getT()[currentMode]} - ${getT().title}`;
+
+                const progress = 1 - (remainingSeconds/totalSeconds);
+                const offset = (1-progress)*CIRCUMFERENCE;
+                progressCircle.style.strokeDashoffset = offset;
+                
+                const delta = Math.abs(prevRemaining - remainingSeconds);
+                const tailLen = Math.min(80, Math.max(20, 30+delta*8));
+                progressTail.setAttribute('stroke-dasharray', `${tailLen} ${CIRCUMFERENCE}`);
+                progressTail.setAttribute('stroke-dashoffset', offset);
+                prevRemaining = remainingSeconds;
+
+                const frac = remainingSeconds/totalSeconds;
+                progressCircle.classList.remove('warning','urgent'); timeDisplay.classList.remove('warning','urgent');
+                if(isRunning && frac<0.1 && remainingSeconds>0) { progressCircle.classList.add('urgent'); timeDisplay.classList.add('urgent'); }
+                else if(isRunning && frac<0.25 && remainingSeconds>0) { progressCircle.classList.add('warning'); timeDisplay.classList.add('warning'); }
+
+                if(isRunning && remainingSeconds<=30 && remainingSeconds>0) {
+                    const s = Math.floor(remainingSeconds);
+                    if(s !== lastSecondVibrate) { vibrateWarning(); lastSecondVibrate = s; }
+                } else lastSecondVibrate = -1;
+            }
+
+            // 更新控件容器及按钮状态的核心逻辑
+            function updateFabState() { 
+                const isPristine = (remainingSeconds === totalSeconds && !isRunning);
+                
+                // 控制待机/运行按钮的平滑过渡
+                controlsCard.classList.toggle('pristine', isPristine);
+                
+                // 控制数字是否出现编辑虚线
+                timeDisplay.classList.toggle('editable', isPristine);
+
+                if(isRunning) { 
+                    fabPlay.classList.add('running'); controlsCard.classList.add('running');
+                    playIcon.style.display='none'; pauseIcon.style.display='block'; 
+                } else { 
+                    fabPlay.classList.remove('running'); controlsCard.classList.remove('running');
+                    playIcon.style.display='block'; pauseIcon.style.display='none'; 
+                } 
+            }
+            
+            function updateIndicatorPosition() {
+                const activeBtn = document.querySelector('.mode-card.active');
+                const container = document.getElementById('modeCards');
+                if (!activeBtn || !container) return;
+                const containerRect = container.getBoundingClientRect();
+                const btnRect = activeBtn.getBoundingClientRect();
+                const leftOffset = btnRect.left - containerRect.left;
+                modeIndicator.style.width = `${btnRect.width}px`;
+                modeIndicator.style.transform = `translateX(${leftOffset}px)`;
+            }
+
+            function updateModeCards() { 
+                modeCards.forEach(c=>{ 
+                    c.classList.remove('active'); 
+                    if(c.dataset.mode===currentMode) c.classList.add('active'); 
+                    c.classList.toggle('disabled',isRunning); 
+                }); 
+                updateIndicatorPosition();
+            }
+            
+            function refreshUI() {
+                updateDisplay(); 
+                timeLabel.textContent = getT()[currentMode];
+                updateFabState(); 
+                updateModeCards();
+                progressContainer.classList.toggle('running', isRunning);
+            }
+
+            function clearTimer() { if(rAF_id) { cancelAnimationFrame(rAF_id); rAF_id = null; } }
+            
+            function tick() { 
+                if(!isRunning) return; 
+                const now = Date.now(); 
+                remainingSeconds = Math.max(0, totalSeconds - (elapsedBeforePause + (now - startTimestamp)/1000)); 
+                updateDisplay(); 
+                
+                if(remainingSeconds <= 0) completeTimer(); 
+                else rAF_id = requestAnimationFrame(tick); 
+            }
+
+            function startTimer() { 
+                if(isRunning) return; 
+                autoStartNext = false;
+                const ctx = getAudioContext();
+                if(ctx.state === 'suspended') ctx.resume();
+                if(remainingSeconds <= 0) { remainingSeconds = totalSeconds; updateDisplay(); } 
+                requestWakeLock(); 
+                isRunning = true; 
+                startTimestamp = Date.now(); 
+                rAF_id = requestAnimationFrame(tick); 
+                playStartSound(); vibrateConfirm(); refreshUI(); 
+            }
+
+            function pauseTimer() { 
+                if(!isRunning) return; 
+                autoStartNext = false;
+                elapsedBeforePause += (Date.now()-startTimestamp)/1000; 
+                remainingSeconds = Math.max(0, totalSeconds-elapsedBeforePause); 
+                isRunning = false; 
+                startTimestamp = null; 
+                clearTimer(); 
+                releaseWakeLock(); 
+                updateDisplay(); refreshUI(); 
+            }
+
+            function resetTimer() { 
+                autoStartNext = false;
+                const was = isRunning; 
+                isRunning = false; 
+                clearTimer(); 
+                releaseWakeLock();
+                startTimestamp = null; elapsedBeforePause = 0; remainingSeconds = totalSeconds; 
+                if(was) playResetSound(); 
+                progressCircle.classList.remove('warning','urgent'); timeDisplay.classList.remove('warning','urgent'); 
+                timeDisplay.style.fontVariationSettings = `"wght" 700, "wdth" 100`;
+                refreshUI(); 
+            }
+
+            function completeTimer() {
+                autoStartNext = true;
+                isRunning = false; clearTimer(); startTimestamp = null; elapsedBeforePause = 0; remainingSeconds = 0; 
+                releaseWakeLock(); updateDisplay();
+                progressCircle.classList.remove('warning','urgent'); timeDisplay.classList.remove('warning','urgent');
+                timeDisplay.style.fontVariationSettings = `"wght" 700, "wdth" 100`;
+                progressContainer.classList.add('completed-anim'); setTimeout(()=>progressContainer.classList.remove('completed-anim'),1500);
+                playCompletionSound(); vibrateComplete();
+
+                if(!appData.history) {
+                    appData.history = { work: {count:0,seconds:0}, shortBreak: {count:0,seconds:0}, longBreak: {count:0,seconds:0} };
+                }
+                appData.history[currentMode].count += 1;
+                appData.history[currentMode].seconds += totalSeconds;
+                saveData();
+                updateStatsUI(); 
+                
+                const t = getT();
+                if(currentMode === 'work') { 
+                    cycleCount++;
+                    showToast(t.toastWorkDone); 
+                    if(cycleCount >= MAX_SESSIONS) { switchMode('longBreak'); } else { switchMode('shortBreak'); }
+                } else { 
+                    showToast(t.toastBreakDone); switchMode('work');
+                }
+                setTimeout(()=>{ if(!isRunning && autoStartNext && remainingSeconds === totalSeconds) { startTimer(); } }, 1600);
+                refreshUI();
+            }
+
+            function switchMode(mode) { 
+    if(isRunning) return; 
+    currentMode = mode; 
+    if (mode === 'work') { cycleCount = 0; }
+    totalSeconds = appData.durations[mode]; 
+    remainingSeconds = totalSeconds; elapsedBeforePause = 0; clearTimer(); updateDisplay(); refreshUI(); 
+}
+            
+            function skipCurrent() { 
+                if(isRunning) pauseTimer(); 
+                autoStartNext = false;
+                remainingSeconds = 0; totalSeconds = appData.durations[currentMode]; elapsedBeforePause = totalSeconds; 
+                updateDisplay(); completeTimer(); 
+            }
+            
+            // 按钮专属的时间加减（分钟为单位）
+            function adjustDuration(deltaSecs) { 
+                if(isRunning) return; 
+                const isPristine = (remainingSeconds === totalSeconds && !isRunning);
+                if(!isPristine) return; 
+                
+                let newSecs = appData.durations[currentMode] + deltaSecs; 
+                newSecs = Math.max(1, Math.min(120 * 60, newSecs)); // 最小1秒，最大120分钟
+                
+                if (appData.durations[currentMode] !== newSecs) { playTickSound(); }
+
+                appData.durations[currentMode] = newSecs; 
+                totalSeconds = appData.durations[currentMode]; remainingSeconds = totalSeconds; elapsedBeforePause = 0; 
+                updateDisplay(); saveData(); 
+            }
+
+            function toggleTheme() { 
+                appData.isDarkTheme = !appData.isDarkTheme; 
+                document.body.classList.toggle('dark', appData.isDarkTheme);
+                saveData();
+            }
+
+            function applyAnimSpeed() {
+                const duration = 2.5 - (appData.settings.anim / 100) * 2.3; 
+                document.documentElement.style.setProperty('--anim-speed', `${duration.toFixed(2)}s`);
+            }
+
+            function updateVolumeIcon(val) {
+                volLow.style.opacity = val > 0 ? '1' : '0';
+                volHigh.style.opacity = val > 50 ? '1' : '0';
+            }
+
+            function handleSettingsChange(e) {
+                const id = e.target.id;
+                const val = parseInt(e.target.value);
+                
+                if (id === 'vibrateSlider') { 
+                    appData.settings.vibrate = val; 
+                    if(navigator.vibrate) navigator.vibrate(Math.max(1, Math.floor(val/10))); 
+                }
+                if (id === 'animSlider') { appData.settings.anim = val; applyAnimSpeed(); }
+                if (id === 'volumeSlider') { 
+                    appData.settings.volume = val; 
+                    updateVolumeIcon(val);
+                    if(val > 0) playTone(400 + val*4, 0.05); 
+                }
+                
+                updateSliderFill(e.target);
+                saveData();
+            }
+
+            // 内联编辑核心逻辑：输入解析器（支持例如 "2500" -> 25m00s, "90" -> 01m30s）
+            function parseTimeString(str) {
+                str = str.replace(/\D/g, ''); // 仅保留数字
+                if(!str) return -1; // 标识清空状态
+                let val = parseInt(str, 10);
+                if(val === 0) return 0;
+                
+                let strVal = val.toString();
+                let sec = 0, min = 0;
+                
+                if(strVal.length <= 2) {
+                    sec = parseInt(strVal, 10);
+                } else {
+                    sec = parseInt(strVal.slice(-2), 10);
+                    min = parseInt(strVal.slice(0, -2), 10);
+                }
+                
+                if(sec > 59) {
+                    min += Math.floor(sec / 60);
+                    sec = sec % 60;
+                }
+                
+                if(min > 120) {
+                    min = 120; sec = 0; // 封顶 120 分钟
+                }
+                
+                return min * 60 + sec;
+            }
+
+            timeDisplay.addEventListener('click', () => {
+                const isPristine = (remainingSeconds === totalSeconds && !isRunning);
+                if (!isPristine) return; 
+                if (document.getElementById('timeInput')) return; 
+
+                vibrateTap(); 
+                const currentSecs = appData.durations[currentMode];
+                
+                const input = document.createElement('input');
+                input.type = 'tel'; // 调出手机端最友好的数字拨号键盘
+                input.id = 'timeInput';
+                
+                // 初始化为纯数字，例如 25分00秒 -> "2500"
+                let m = Math.floor(currentSecs / 60);
+                let s = Math.floor(currentSecs % 60);
+                input.value = String(m).padStart(2, '0') + String(s).padStart(2, '0');
+                
+                input.className = 'time-display-input'; 
+                
+                timeDisplay.style.display = 'none';
+                timeDisplay.parentNode.insertBefore(input, timeDisplay);
+                
+                input.focus(); 
+                let len = input.value.length;
+                input.setSelectionRange(len, len); // 光标置于末尾
+
+                const finishEdit = () => {
+                    let parsedSecs = parseTimeString(input.value);
+                    if (parsedSecs === -1) parsedSecs = currentSecs; // 如果用户删光了不改，直接恢复
+                    if (parsedSecs < 1) parsedSecs = 60; // 最小限制为 1 分钟（60秒）
+
+                    if (parsedSecs !== currentSecs) {
+                        appData.durations[currentMode] = parsedSecs;
+                        totalSeconds = parsedSecs;
+                        remainingSeconds = totalSeconds;
+                        elapsedBeforePause = 0;
+                        saveData();
+                        playTickSound(); 
+                    }
+                    
+                    input.remove();
+                    timeDisplay.style.display = '';
+                    updateDisplay();
+                    updateFabState();
+                };
+
+                input.addEventListener('blur', finishEdit);
+                input.addEventListener('keydown', (e) => { if (e.key === 'Enter') input.blur(); });
+            });
+
+            langBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const newLangIdx = parseInt(e.target.dataset.lang);
+                    const oldLangIdx = appData.settings.lang;
+                    
+                    if(oldLangIdx !== newLangIdx) {
+                        const direction = newLangIdx > oldLangIdx ? 'left' : 'right';
+                        appData.settings.lang = newLangIdx;
+                        applyLanguage(direction); vibrateConfirm(); saveData();
+                    }
+                });
+            });
+
+            [vibrateSlider, animSlider, volumeSlider].forEach(slider => {
+                slider.addEventListener('input', handleSettingsChange);
+                slider.addEventListener('change', () => { if(slider.id === 'vibrateSlider') vibrateTest(); });
+            });
+
+            function createRipple(e) {
+                const btn = e.currentTarget; const rect = btn.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2; const y = e.clientY - rect.top - size / 2;
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple'; ripple.style.width = ripple.style.height = `${size}px`; ripple.style.left = `${x}px`; ripple.style.top = `${y}px`;
+                btn.appendChild(ripple); ripple.addEventListener('animationend', () => { ripple.remove(); });
+            }
+
+            document.querySelectorAll('.adjust-btn, .btn-filled, .fab-primary, .icon-btn, .session-card-btn').forEach(el => {
+                el.addEventListener('pointerdown', createRipple);
+            });
+            
+            fabPlay.addEventListener('pointerdown',()=>{ fabPlay.classList.add('bounce'); fabPlay.addEventListener('animationend',()=>fabPlay.classList.remove('bounce'),{once:true}); });
+            
+            settingsToggle.addEventListener('click',()=>{ settingsOverlay.classList.add('active'); bottomSheet.classList.add('active'); });
+            settingsOverlay.addEventListener('click',()=>{ settingsOverlay.classList.remove('active'); bottomSheet.classList.remove('active'); });
+            
+            statsEntryBtn.addEventListener('click',()=>{ statsOverlay.classList.add('active'); statsSheet.classList.add('active'); updateStatsUI(); });
+            statsOverlay.addEventListener('click',()=>{ statsOverlay.classList.remove('active'); statsSheet.classList.remove('active'); });
+
+            fabPlay.addEventListener('click',()=>{ if(isRunning){ pauseTimer(); vibrateCancel(); } else startTimer(); });
+            resetBtn.addEventListener('click',()=>{ resetTimer(); vibrateReset(); });
+            skipBtn.addEventListener('click',()=>{ skipCurrent(); vibrateSkip(); });
+            
+            modeCards.forEach(card=>{ 
+    card.addEventListener('click',()=>{ 
+        if(isRunning) return; 
+        const mode=card.dataset.mode; 
+        if(mode && mode !== currentMode){ 
+            autoStartNext = false; // 手动切换时禁止自动开始
+            vibrateTap(); switchMode(mode); 
+        } 
+    }); 
+});
+            
+            adjustMinusBtn.addEventListener('click',()=>{ adjustDuration(-60); }); // 按钮调时间默认步进60秒
+            adjustPlusBtn.addEventListener('click',()=>{ adjustDuration(60); });
+            
+            let longPressTimeout = null; let longPressInterval = null;
+            function setupLongPress(btn, delta) { 
+                btn.addEventListener('pointerdown', () => { 
+                    longPressTimeout = setTimeout(() => { vibrateLongPress(); longPressInterval = setInterval(() => { adjustDuration(delta); }, 120); }, 400); 
+                }); 
+                const clear = () => { 
+                    if (longPressTimeout) { clearTimeout(longPressTimeout); longPressTimeout = null; } 
+                    if (longPressInterval) { clearInterval(longPressInterval); longPressInterval = null; } 
+                }; 
+                btn.addEventListener('pointerup', clear); btn.addEventListener('pointerleave', clear); btn.addEventListener('pointercancel', clear); 
+            }
+            
+            setupLongPress(adjustMinusBtn, -60); 
+            setupLongPress(adjustPlusBtn, 60);
+            
+            themeToggle.addEventListener('click',()=>{ toggleTheme(); vibrateTap(); });
+            
+            document.addEventListener('keydown',(e)=>{ if(e.code==='Space'&&e.target===document.body){ e.preventDefault(); isRunning?pauseTimer():startTimer(); isRunning?vibrateCancel():vibrateConfirm(); } else if(e.code==='KeyR'&&e.target===document.body){ e.preventDefault(); resetTimer(); vibrateReset(); } });
+            document.addEventListener('visibilitychange',()=>{ if(!document.hidden && isRunning && wakeLock === null) { requestWakeLock(); } });
+            window.addEventListener('resize', () => { updateIndicatorPosition(); updateLangIndicator(); });
+
+            progressCircle.style.strokeDasharray = CIRCUMFERENCE; progressCircle.style.strokeDashoffset = CIRCUMFERENCE;
+            progressTail.setAttribute('stroke-dasharray', `30 ${CIRCUMFERENCE}`); progressTail.setAttribute('stroke-dashoffset', CIRCUMFERENCE);
+            
+            loadData();
+        })();
+    </script>
+</body>
+</html>
