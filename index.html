@@ -131,7 +131,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
 
         html, body {
-            height: 100%; width: 100%; overflow: hidden; font-family: 'Nunito', 'Roboto', sans-serif;
+            height: 100%; height: 100dvh; width: 100%; overflow: hidden; font-family: 'Nunito', 'Roboto', sans-serif;
             background-color: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface);
             touch-action: manipulation; -webkit-font-smoothing: antialiased;
             display: flex; justify-content: center; align-items: center;
@@ -850,6 +850,7 @@ updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
             }
 
             function getAudioContext() { if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+            document.body.addEventListener('pointerdown', function unlockAudio() { const ctx = getAudioContext(); if(ctx.state === 'suspended') ctx.resume(); const buffer = ctx.createBuffer(1, 1, 22050); const source = ctx.createBufferSource(); source.buffer = buffer; source.connect(ctx.destination); source.start(0); document.body.removeEventListener('pointerdown', unlockAudio); }, { once: true });
             function playTone(freq, dur, type='sine') { 
                 try { 
                     const ctx = getAudioContext(); 
@@ -885,7 +886,7 @@ updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
             function vibrateTest() { vibrate([10, 15, 10]); }        
             function vibrateComplete() { vibrate([80, 70, 80, 70, 180]); }
 
-            async function requestWakeLock() { try { if ('wakeLock' in navigator) { wakeLock = await navigator.wakeLock.request('screen'); } } catch (err) {} }
+            async function requestWakeLock() { try { if ('wakeLock' in navigator) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); } } catch (err) {} }
             function releaseWakeLock() { if (wakeLock !== null) { wakeLock.release().then(() => wakeLock = null); } }
 
             function showToast(m) { if(toastTimeout) clearTimeout(toastTimeout); toast.textContent=m; toast.classList.add('show'); toastTimeout=setTimeout(()=>toast.classList.remove('show'),2200); }
@@ -1017,22 +1018,24 @@ updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
                 refreshUI(); 
             }
 
-            function completeTimer() {
+            function completeTimer(isSkip = false) {
                 autoStartNext = true;
                 isRunning = false; clearTimer(); startTimestamp = null; elapsedBeforePause = 0; remainingSeconds = 0; 
                 releaseWakeLock(); updateDisplay();
                 progressCircle.classList.remove('warning','urgent'); timeDisplay.classList.remove('warning','urgent');
                 timeDisplay.style.fontVariationSettings = `"wght" 700, "wdth" 100`;
                 progressContainer.classList.add('completed-anim'); setTimeout(()=>progressContainer.classList.remove('completed-anim'),1500);
-                playCompletionSound(); vibrateComplete();
-
-                if(!appData.history) {
-                    appData.history = { work: {count:0,seconds:0}, shortBreak: {count:0,seconds:0}, longBreak: {count:0,seconds:0} };
+                
+                if (!isSkip) {
+                    playCompletionSound(); vibrateComplete();
+                    if(!appData.history) {
+                        appData.history = { work: {count:0,seconds:0}, shortBreak: {count:0,seconds:0}, longBreak: {count:0,seconds:0} };
+                    }
+                    appData.history[currentMode].count += 1;
+                    appData.history[currentMode].seconds += totalSeconds;
+                    saveData();
+                    updateStatsUI(); 
                 }
-                appData.history[currentMode].count += 1;
-                appData.history[currentMode].seconds += totalSeconds;
-                saveData();
-                updateStatsUI(); 
                 
                 const t = getT();
                 if(currentMode === 'work') { 
@@ -1058,7 +1061,7 @@ updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
                 if(isRunning) pauseTimer(); 
                 autoStartNext = false;
                 remainingSeconds = 0; totalSeconds = appData.durations[currentMode]; elapsedBeforePause = totalSeconds; 
-                updateDisplay(); completeTimer(); 
+                updateDisplay(); completeTimer(true); 
             }
             
             // 按钮专属的时间加减（分钟为单位）
