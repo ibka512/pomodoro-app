@@ -30,8 +30,16 @@ self.addEventListener('fetch', event => {
   );
 });
 
+// 监听客户端发出的跳过等待指令，立即接管并应用新版本
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 // 激活时自动清理旧版本缓存
 self.addEventListener('activate', event => {
+
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
