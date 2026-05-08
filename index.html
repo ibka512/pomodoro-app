@@ -11,7 +11,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&family=Nunito:wght@400;500;600;700&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&family=Zen+Old+Mincho:wght@600&display=swap" rel="stylesheet">
 
-    <!-- Material Web 组件引入 -->
     <script type="importmap">
         {
             "imports": {
@@ -24,52 +23,58 @@
     </script>
 
     <style>
-                :root {
+    
+    .chart-scroll-wrapper {
+    overflow-x: hidden;
+}
+.line-chart-card.expanded .chart-scroll-wrapper {
+    overflow-x: auto;
+}
+        :root {
             /* ====== 主色调系列（核心视觉强调色） ====== */
-            --md-sys-color-primary: #A33B31; /* 进度条拖尾填充、主播放按钮背景、设置滑块填充部分、统计数据中的数字、时间输入态虚线 */
-            --md-sys-color-on-primary: #FFFFFF; /* 主播放按钮内部的图标颜色 */
-            --md-sys-color-primary-container: #FFDAD5; /* 当前模式(工作/休息)的滑块背景指示器、统计卡片左侧方块图标背景 */
-            --md-sys-color-on-primary-container: #410001; /* 激活状态下的模式文字(如高亮“工作”字样)、按钮点击时的水波纹涟漪颜色 */
+            --md-sys-color-primary: #A33B31;
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-primary-container: #FFDAD5;
+            --md-sys-color-on-primary-container: #410001;
 
             /* ====== 次要色调系列 ====== */
-            --md-sys-color-secondary: #775652; /* 预留次要色(当前无直接显式调用) */
-            --md-sys-color-on-secondary: #FFFFFF; /* 预留次要色文本 */
-            --md-sys-color-secondary-container: #FFDAD5; /* 倒计时运行状态下(方形)的播放/暂停按钮背景色 */
-            --md-sys-color-on-secondary-container: #2C1512; /* 倒计时运行状态下的暂停图标颜色 */
+            --md-sys-color-secondary: #775652;
+            --md-sys-color-on-secondary: #FFFFFF;
+            --md-sys-color-secondary-container: #FFDAD5;
+            --md-sys-color-on-secondary-container: #2C1512;
 
             /* ====== 第三色调系列（当前用于第一级警告状态） ====== */
-            --md-sys-color-tertiary: #715B2E; /* 时间剩余少于 25% 时的警告色：圆环进度条和中间倒计时大数字颜色 */
-            --md-sys-color-on-tertiary: #FFFFFF; /* 预留 */
-            --md-sys-color-tertiary-container: #FDE0A6; /* 预留 */
-            --md-sys-color-on-tertiary-container: #261900; /* 预留 */
+            --md-sys-color-tertiary: #715B2E;
+            --md-sys-color-on-tertiary: #FFFFFF;
+            --md-sys-color-tertiary-container: #FDE0A6;
+            --md-sys-color-on-tertiary-container: #261900;
 
             /* ====== 错误/危险色调系列（当前用于最紧急警告状态） ====== */
-            --md-sys-color-error: #BA1A1A; /* 时间剩余少于 10% 时的紧急色：圆环进度条和中间倒计时大数字颜色 */
-            --md-sys-color-on-error: #FFFFFF; /* 预留 */
-            --md-sys-color-error-container: #FFDAD6; /* 预留 */
-            --md-sys-color-on-error-container: #410002; /* 预留 */
+            --md-sys-color-error: #BA1A1A;
+            --md-sys-color-on-error: #FFFFFF;
+            --md-sys-color-error-container: #FFDAD6;
+            --md-sys-color-on-error-container: #410002;
 
             /* ====== 表面及背景色调系列（大面积背景和文字） ====== */
-            --md-sys-color-surface: #FFF8F6; /* 整个页面的最底层大背景颜色 */
-            --md-sys-color-on-surface: #231918; /* 页面的主要高对比度文字颜色：顶部主标题、中间巨大的倒计时数字、弹窗标题 */
-            --md-sys-color-surface-variant: #F5E9E7; /* 各类按钮被按压(active)时的背景变化反馈色 */
-            --md-sys-color-on-surface-variant: #534341; /* 次要文字/图标颜色：未激活的模式文字、设置项文字与图标、加减号及重置小按钮颜色 */
+            --md-sys-color-surface: #FFF8F6;
+            --md-sys-color-on-surface: #231918;
+            --md-sys-color-surface-variant: #F5E9E7;
+            --md-sys-color-on-surface-variant: #534341;
             
             /* ====== 轮廓线条颜色 ====== */
-            --md-sys-color-outline: #857370; /* 预留基础轮廓色 */
-            --md-sys-color-outline-variant: #D8C2BF; /* 倒计时待机可点击时的虚线下划线颜色、底部弹窗顶部的小把手(横条)颜色 */
+            --md-sys-color-outline: #857370;
+            --md-sys-color-outline-variant: #D8C2BF;
 
             /* ====== 表面容器色系（区分卡片层级，从低到高颜色逐渐加深/凸起） ====== */
-            --md-sys-color-surface-container-lowest: #FFFFFF; /* 最浅层：设置项滑块的圆形推钮中心背景色 */
-            --md-sys-color-surface-container-low: #FFF1EF; /* 基础卡片层：顶部小标题卡片、中间倒计时巨大卡片、底部上拉设置/统计弹窗整体背景 */
-            --md-sys-color-surface-container: #FCEAE8; /* 预留中间容器级 */
-            --md-sys-color-surface-container-high: #F6E4E2; /* 较高层：模式切换长条底色、控制按钮面板底色、记录统计长条按钮按下时的底色 */
-            --md-sys-color-surface-container-highest: #F1DFDD; /* 最高/最深层：右上角(主题/设置)圆形小按钮底色、进度条环底部的灰色轨道、语言切换控件底色、统计单条卡片底色 */
+            --md-sys-color-surface-container-lowest: #FFFFFF;
+            --md-sys-color-surface-container-low: #FFF1EF;
+            --md-sys-color-surface-container: #FCEAE8;
+            --md-sys-color-surface-container-high: #F6E4E2;
+            --md-sys-color-surface-container-highest: #F1DFDD;
 
             /* ====== 反转表面色（用于黑色对比提示框） ====== */
-            --md-sys-color-inverse-surface: #382E2D; /* 底部弹出的 Toast 提示框背景色（如“工作完成！”） */
-            --md-sys-color-inverse-on-surface: #FFEDEA; /* 底部弹出的 Toast 提示框内的文字颜色 */
-
+            --md-sys-color-inverse-surface: #382E2D;
+            --md-sys-color-inverse-on-surface: #FFEDEA;
 
             --md-sys-shape-corner-extra-small: 8px;
             --md-sys-shape-corner-small: 16px;
@@ -89,52 +94,36 @@
         }
 
         body.dark {
-            /* ====== 主色调系列（同上，控制深色模式下主要强调色） ====== */
-            --md-sys-color-primary: #FFB4AB; /* 进度条拖尾、大播放按钮背景、设置滑块等主色 */
-            --md-sys-color-on-primary: #690003; /* 大播放按钮内的图标 */
-            --md-sys-color-primary-container: #83241C; /* 模式指示器条、统计左侧方块背景 */
-            --md-sys-color-on-primary-container: #FFDAD5; /* 激活的模式文字(如“工作”)、水波纹 */
-            
-            /* ====== 次要色调系列 ====== */
+            --md-sys-color-primary: #FFB4AB;
+            --md-sys-color-on-primary: #690003;
+            --md-sys-color-primary-container: #83241C;
+            --md-sys-color-on-primary-container: #FFDAD5;
             --md-sys-color-secondary: #E7BDB7;
             --md-sys-color-on-secondary: #442926;
-            --md-sys-color-secondary-container: #5D3F3B; /* 倒计时运行时的播放/暂停按钮背景 */
-            --md-sys-color-on-secondary-container: #FFDAD5; /* 倒计时运行时的暂停图标 */
-            
-            /* ====== 第三色调系列（警告状态） ====== */
-            --md-sys-color-tertiary: #E0C48C; /* 剩余<25%时的警告色(进度条/时间字) */
+            --md-sys-color-secondary-container: #5D3F3B;
+            --md-sys-color-on-secondary-container: #FFDAD5;
+            --md-sys-color-tertiary: #E0C48C;
             --md-sys-color-on-tertiary: #3F2E04;
             --md-sys-color-tertiary-container: #584419;
             --md-sys-color-on-tertiary-container: #FDE0A6;
-            
-            /* ====== 错误/危险色调系列（紧急警告状态） ====== */
-            --md-sys-color-error: #FFB4AB; /* 剩余<10%时的紧急色(进度条/时间字) */
+            --md-sys-color-error: #FFB4AB;
             --md-sys-color-on-error: #690005;
             --md-sys-color-error-container: #93000A;
             --md-sys-color-on-error-container: #FFDAD6;
-            
-            /* ====== 深色模式下的表面大背景和文字 ====== */
-            --md-sys-color-surface: #1A1110; /* 最底层大背景(纯黑/深灰) */
-            --md-sys-color-on-surface: #F1DFDD; /* 最亮的文字(主标题、大倒计时数字等) */
-            --md-sys-color-surface-variant: #534341; /* 按钮按压时的底色反馈 */
-            --md-sys-color-on-surface-variant: #D8C2BF; /* 次要文字、未激活模式字、次要图标 */
-            
-            /* ====== 轮廓线条 ====== */
+            --md-sys-color-surface: #1A1110;
+            --md-sys-color-on-surface: #F1DFDD;
+            --md-sys-color-surface-variant: #534341;
+            --md-sys-color-on-surface-variant: #D8C2BF;
             --md-sys-color-outline: #A08C89; 
-            --md-sys-color-outline-variant: #534341; /* 虚线下划线颜色、弹窗把手颜色 */
-            
-            /* ====== 表面容器色系（深色模式下，由最深到稍浅渐变） ====== */
-            --md-sys-color-surface-container-lowest: #140C0B; /* 滑块圆形推钮底色 */
-            --md-sys-color-surface-container-low: #1A1110; /* 主倒计时大卡片、顶部卡片底色 */
+            --md-sys-color-outline-variant: #534341;
+            --md-sys-color-surface-container-lowest: #140C0B;
+            --md-sys-color-surface-container-low: #1A1110;
             --md-sys-color-surface-container: #211514; 
-            --md-sys-color-surface-container-high: #2B1F1E; /* 控制按钮面板底色、模式切换条底色 */
-            --md-sys-color-surface-container-highest: #362928; /* 右上角小按钮、圆环轨道、语言切换底色 */
-            
-            /* ====== 反转表面色（深色模式下的Toast提示往往更亮以形成反比） ====== */
-            --md-sys-color-inverse-surface: #F1DFDD; /* Toast 提示背景色 */
-            --md-sys-color-inverse-on-surface: #382E2D; /* Toast 提示文字颜色 */
+            --md-sys-color-surface-container-high: #2B1F1E;
+            --md-sys-color-surface-container-highest: #362928;
+            --md-sys-color-inverse-surface: #F1DFDD;
+            --md-sys-color-inverse-on-surface: #382E2D;
 
-            /* 深色模式下的阴影处理（无需修改，负责弥补黑底阴影不明显的问题） */
             --md-sys-elevation-1: 0px 4px 8px rgba(0,0,0,0.5), 0px 2px 4px rgba(0,0,0,0.4);
             --md-sys-elevation-2: 0px 6px 12px rgba(0,0,0,0.6), 0px 3px 6px rgba(0,0,0,0.5);
             --md-sys-elevation-3: 0px 8px 16px rgba(0,0,0,0.7), 0px 4px 8px rgba(0,0,0,0.6);
@@ -191,11 +180,11 @@
         }
         body.dark .mode-cards { box-shadow: inset 0px 3px 8px rgba(0,0,0,0.3); }
 
-        .mode-indicator {
-            position: absolute; top: 6px; bottom: 6px; left: 0; width: 33.33%; border-radius: 30px;
-            background-color: var(--md-sys-color-primary-container); box-shadow: var(--md-sys-elevation-1); z-index: 0;
-            transition: transform 0.6s var(--md-sys-motion-easing-emphasized), width 0.6s var(--md-sys-motion-easing-emphasized), background-color 0.4s ease;
-        }
+.mode-indicator {
+    position: absolute; top: 6px; bottom: 6px; left: 0; width: 33.33%; border-radius: 30px;
+    background-color: var(--md-sys-color-primary-container); box-shadow: var(--md-sys-elevation-1); z-index: 0;
+    transition: transform 0.6s var(--md-sys-motion-easing-emphasized), width 0.6s var(--md-sys-motion-easing-emphasized), background-color 0.4s ease;
+}
 
         .mode-card {
             flex: 1; padding: 14px 4px; background: transparent; border: none; font-family: inherit;
@@ -220,7 +209,6 @@
             flex-shrink: 0; border-radius: 50%; 
             transition: transform 0.8s var(--md-sys-motion-easing-spring); 
         }
-        /* 修正后的居中形变补偿 */
         .progress-container.running { transform: translateY(12px) scale(1.06); }
         
         .progress-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
@@ -233,15 +221,13 @@
         .progress-ring .progress.warning { stroke: var(--md-sys-color-tertiary); }
         .progress-ring .progress.urgent { stroke: var(--md-sys-color-error); }
 
-                /* 恢复 pointer-events: auto 让数字可点击 */
         .time-display-wrapper { 
             position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); 
             display: flex; flex-direction: column; align-items: center; 
-            gap: 16px; /* 增大间距，为虚线下划线腾出物理渲染空间，同时也增强呼吸感 */
+            gap: 16px; 
             pointer-events: auto; z-index: 10;
         }
 
-        
         .time-display {
             font-size: clamp(3.2rem, 11vw, 4.8rem); 
             font-family: 'Roboto Flex', 'Inter', monospace;
@@ -253,32 +239,22 @@
         .time-display.warning { color: var(--md-sys-color-tertiary); } 
         .time-display.urgent { color: var(--md-sys-color-error); }
         
-        /* 待机态下的可编辑虚线提示 */
         .time-display.editable {
             text-decoration: underline;
             text-decoration-style: dashed;
             text-decoration-color: var(--md-sys-color-outline-variant);
-            text-underline-offset: 8px; /* 稍微收紧虚线与数字的距离，使其视觉上更像一个输入组件 */
+            text-underline-offset: 8px; 
             text-decoration-thickness: 3px;
             cursor: pointer;
             border-radius: 12px;
         }
         .time-display.editable:active { opacity: 0.6; }
 
-        /* 输入态的极简表单样式 */
         .time-display-input {
-            width: 4em;
-            background: transparent;
-            border: none;
-            color: var(--md-sys-color-primary);
-            font-family: 'Roboto Flex', 'Inter', monospace;
-            font-size: clamp(3.2rem, 11vw, 4.8rem);
-            font-weight: 800;
-            text-align: center;
-            outline: none;
-            padding: 0;
-            line-height: 1;
-            letter-spacing: -0.04em;
+            width: 4em; background: transparent; border: none;
+            color: var(--md-sys-color-primary); font-family: 'Roboto Flex', 'Inter', monospace;
+            font-size: clamp(3.2rem, 11vw, 4.8rem); font-weight: 800; text-align: center;
+            outline: none; padding: 0; line-height: 1; letter-spacing: -0.04em;
             border-bottom: 3px dashed var(--md-sys-color-primary);
         }
         
@@ -308,21 +284,14 @@
         .fab-primary.bounce { animation: fabBounce 0.5s var(--md-sys-motion-easing-spring); }
         @keyframes fabBounce { 0% { transform: scale(1); } 40% { transform: scale(0.85); } 100% { transform: scale(1); } }
 
-        /* M3 控件物理形变动画核心 */
         .btn-filled.btn-stateful {
             max-width: 54px; width: 54px; height: 48px; border-radius: 24px; border: none; background: transparent; color: var(--md-sys-color-on-surface-variant);
             cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center;
             transition: max-width 0.4s var(--md-sys-motion-easing-spring), background-color 0.3s ease, opacity 0.3s ease, transform 0.4s var(--md-sys-motion-easing-spring), margin 0.4s ease; 
             position: relative; overflow: hidden;
         }
-        /* 运行或中途暂停状态：加减号收起 */
-        .controls-card:not(.pristine) .btn-idle {
-            max-width: 0; opacity: 0; margin: 0; transform: scale(0) rotate(-45deg); pointer-events: none;
-        }
-        /* 纯净待机状态：重置跳过号收起 */
-        .controls-card.pristine .btn-running {
-            max-width: 0; opacity: 0; margin: 0; transform: scale(0) rotate(45deg); pointer-events: none;
-        }
+        .controls-card:not(.pristine) .btn-idle { max-width: 0; opacity: 0; margin: 0; transform: scale(0) rotate(-45deg); pointer-events: none; }
+        .controls-card.pristine .btn-running { max-width: 0; opacity: 0; margin: 0; transform: scale(0) rotate(45deg); pointer-events: none; }
         
         .controls-card.running .btn-filled.btn-stateful { transform: scale(0.85); border-radius: 16px; opacity: 0.6; }
         .btn-filled:active { background: var(--md-sys-color-surface-variant); transform: scale(0.9); }
@@ -348,7 +317,6 @@
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
-        /* ======== 悬浮式更新通知台 (Floating Update Snackbar) ======== */
         .update-snackbar {
             position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%) translateY(150px);
             background-color: var(--md-sys-color-inverse-surface); color: var(--md-sys-color-inverse-on-surface);
@@ -358,28 +326,13 @@
             opacity: 0; pointer-events: none; letter-spacing: 0.02em; white-space: nowrap; max-width: 90vw;
         }
         .update-snackbar.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
-        
         .update-snackbar-text { display: flex; align-items: center; gap: 8px; flex: 1; }
-        .update-snackbar-icon { 
-            display: flex; align-items: center; justify-content: center; color: var(--md-sys-color-inverse-on-surface);
-            animation: rotate-pulse 2s cubic-bezier(0.2, 0, 0, 1) infinite;
-        }
+        .update-snackbar-icon { display: flex; align-items: center; justify-content: center; color: var(--md-sys-color-inverse-on-surface); animation: rotate-pulse 2s cubic-bezier(0.2, 0, 0, 1) infinite; }
         .update-snackbar-icon svg { width: 18px; height: 18px; }
-        
-        .update-btn {
-            background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
-            border: none; padding: 10px 20px; border-radius: 20px; font-weight: 800; cursor: pointer;
-            transition: transform 0.4s var(--md-sys-motion-easing-spring), background-color 0.3s ease; 
-            font-family: inherit; font-size: 0.9rem; letter-spacing: 0.04em;
-        }
+        .update-btn { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); border: none; padding: 10px 20px; border-radius: 20px; font-weight: 800; cursor: pointer; transition: transform 0.4s var(--md-sys-motion-easing-spring), background-color 0.3s ease; font-family: inherit; font-size: 0.9rem; letter-spacing: 0.04em; }
         .update-btn:active { transform: scale(0.92); background-color: var(--md-sys-color-on-primary-container); color: var(--md-sys-color-primary-container); }
 
-        @keyframes rotate-pulse {
-            0% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.1); }
-            100% { transform: rotate(360deg) scale(1); }
-        }
-
+        @keyframes rotate-pulse { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
         @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(196,74,60,0.4); } 50% { box-shadow: 0 0 0 32px rgba(196,74,60,0); } 100% { box-shadow: 0 0 0 0 rgba(196,74,60,0); } }
         .progress-container.completed-anim { animation: pulse-ring 1.5s ease-out; }
 
@@ -416,11 +369,11 @@
             display: flex; background: var(--md-sys-color-surface-container-highest); border-radius: 20px; padding: 4px; gap: 4px; 
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); position: relative; z-index: 1;
         }
-        .lang-indicator {
-            position: absolute; top: 4px; bottom: 4px; left: 0; width: 33.33%; border-radius: 16px;
-            background-color: var(--md-sys-color-primary-container); box-shadow: var(--md-sys-elevation-1); z-index: 0;
-            transition: transform 0.5s var(--md-sys-motion-easing-emphasized), width 0.5s var(--md-sys-motion-easing-emphasized);
-        }
+.lang-indicator {
+    position: absolute; top: 4px; bottom: 4px; left: 0; width: 33.33%; border-radius: 16px;
+    background-color: var(--md-sys-color-primary-container); box-shadow: var(--md-sys-elevation-1); z-index: 0;
+    transition: transform 0.5s var(--md-sys-motion-easing-emphasized), width 0.5s var(--md-sys-motion-easing-emphasized);
+}
         .lang-btn {
             flex: 1; border: none; background: transparent; padding: 6px 14px; border-radius: 16px;
             font-weight: 700; font-size: 0.85rem; color: var(--md-sys-color-on-surface-variant); cursor: pointer; 
@@ -429,15 +382,8 @@
         .lang-btn.active { color: var(--md-sys-color-on-primary-container); }
         .lang-btn:active { transform: scale(0.9); }
 
-        /* Material Slider 样式微调 */
-        md-slider {
-            width: 140px;
-            --md-slider-track-height: 16px;
-            --md-slider-handle-width: 24px;
-            --md-slider-handle-height: 24px;
-        }
+        md-slider { width: 140px; --md-slider-track-height: 16px; --md-slider-handle-width: 24px; --md-slider-handle-height: 24px; }
 
-        /* ======== 全局文本滑动动效 ======== */
         .slide-out-left { animation: slideOutL 0.25s cubic-bezier(0.2, 0, 0, 1) forwards; display: inline-block; }
         .slide-in-right { animation: slideInR 0.35s cubic-bezier(0.2, 0, 0, 1) forwards; display: inline-block; }
         .slide-out-right { animation: slideOutR 0.25s cubic-bezier(0.2, 0, 0, 1) forwards; display: inline-block; }
@@ -447,7 +393,7 @@
         @keyframes slideOutR { to { transform: translateX(15px); opacity: 0; filter: blur(2px); } }
         @keyframes slideInL { from { transform: translateX(-15px); opacity: 0; filter: blur(2px); } to { transform: translateX(0); opacity: 1; filter: blur(0); } }
 
-        /* ======== 统计记录底栏 (Container Transform) ======== */
+        /* ======== 统计记录底栏 ======== */
         .stats-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 300; opacity: 0; visibility: hidden; 
@@ -458,8 +404,9 @@
         
         .stats-sheet {
             position: fixed; bottom: 0; left: 50%; width: 100%; max-width: 440px; 
-            height: 66vh; background: var(--md-sys-color-surface-container-low); 
-            border-radius: 48px 48px 0 0; padding: 24px 24px 40px; 
+            height: auto; max-height: 90vh; 
+            background: var(--md-sys-color-surface-container-low); 
+            border-radius: 48px 48px 0 0; padding: 24px 24px 36px;
             box-shadow: 0px -16px 32px rgba(0,0,0,0.15);
             transform: translate(-50%, calc(100% + 50px)); 
             transition: transform 0.6s var(--md-sys-motion-easing-emphasized), border-radius 0.6s var(--md-sys-motion-easing-emphasized);
@@ -467,27 +414,139 @@
         }
         .stats-sheet.active { transform: translate(-50%, 0); border-radius: 28px 28px 0 0; }
         
-        .stats-list { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding-top: 8px; flex: 1; }
+        .stats-list { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding-top: 4px; flex: 1; }
         
         .stat-card {
-            background: var(--md-sys-color-surface-container-highest); border-radius: 24px;
-            padding: 20px; display: flex; align-items: center; gap: 16px; flex-shrink: 0;
+            background: var(--md-sys-color-surface-container-highest); border-radius: 20px;
+            padding: 14px 16px; display: flex; align-items: center; gap: 14px; flex-shrink: 0;
             box-shadow: inset 0 2px 4px rgba(255,255,255,0.2); 
             transition: transform 0.3s ease, background-color 0.3s ease;
         }
         body.dark .stat-card { box-shadow: inset 0 2px 4px rgba(255,255,255,0.02); }
-        .stat-card:active { transform: scale(0.98); background: var(--md-sys-color-surface-variant); }
-        
+        .stat-card:not(.line-chart-card):active { transform: scale(0.98); background: var(--md-sys-color-surface-variant); }
+
         .stat-icon-wrap {
-            width: 48px; height: 48px; border-radius: 16px; background: var(--md-sys-color-primary-container);
+            width: 40px; height: 40px; border-radius: 12px; background: var(--md-sys-color-primary-container);
             color: var(--md-sys-color-on-primary-container); display: flex; align-items: center; justify-content: center;
         }
-        .stat-icon-wrap svg { width: 26px; height: 26px; }
+        .stat-icon-wrap svg { width: 22px; height: 22px; }
+
         .stat-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
         .stat-name { font-size: 0.95rem; font-weight: 700; color: var(--md-sys-color-on-surface); }
         .stat-data { display: flex; align-items: baseline; gap: 6px; }
         .stat-val { font-size: 1.15rem; font-weight: 800; color: var(--md-sys-color-primary); font-family: 'Roboto Flex', 'Inter', monospace; }
         .stat-unit { font-size: 0.8rem; font-weight: 600; color: var(--md-sys-color-on-surface-variant); }
+
+        .stats-time-segment { margin-bottom: 16px; width: 100%; }
+
+        /* ===== 全新：渐进式展开折线图样式 (Matte papercraft) ===== */
+        .line-chart-card { 
+            flex-direction: column; align-items: flex-start; gap: 12px; 
+            padding: 16px 20px; margin-top: 4px; margin-bottom: 12px; 
+            height: 160px; /* 默认折叠高度 */
+            transition: height 0.5s var(--md-sys-motion-easing-spring), background-color 0.4s ease;
+            position: relative; overflow: hidden; cursor: pointer;
+            -webkit-user-select: none; user-select: none; touch-action: pan-y;
+        }
+        .line-chart-card.expanded {
+            height: 280px; /* 展开高度 */
+            background: var(--md-sys-color-surface-container-high);
+        }
+        
+        .chart-header { display: flex; justify-content: space-between; width: 100%; flex-shrink: 0; pointer-events: none;}
+        .chart-title { font-size: 0.85rem; font-weight: 700; color: var(--md-sys-color-on-surface-variant); letter-spacing: 0.02em; }
+        .chart-hint { font-size: 0.7rem; color: var(--md-sys-color-outline-variant); font-weight: 600; opacity: 1; transition: opacity 0.3s ease;}
+        .line-chart-card.expanded .chart-hint { opacity: 0; }
+
+        .chart-scroll-wrapper {
+            width: 100%; height: 100%; flex: 1;
+            overflow-x: hidden; overflow-y: hidden;
+            scroll-behavior: smooth;
+        }
+        .line-chart-card.expanded .chart-scroll-wrapper {
+            overflow-x: auto; /* 展开后允许横向滑动 */
+            touch-action: pan-x;
+        }
+        /* 隐藏滚动条 */
+        .chart-scroll-wrapper::-webkit-scrollbar { display: none; }
+        
+        .chart-inner {
+            height: 100%; width: 100%; 
+            transition: width 0.5s var(--md-sys-motion-easing-spring);
+            position: relative;
+        }
+        /* 根据范围动态设置展开后的画布宽度 */
+        
+
+        .line-chart-svg { width: 100%; height: 100%; overflow: visible; }
+        
+        .chart-line {
+            fill: none; stroke: var(--md-sys-color-primary); 
+            stroke-width: 3; stroke-linejoin: round; stroke-linecap: round;
+        }
+        /* 区域底色 */
+        .chart-area {
+            fill: url(#areaGradient); pointer-events: none;
+        }
+
+        .chart-point {
+            fill: var(--md-sys-color-surface-container-lowest);
+            stroke: var(--md-sys-color-primary); stroke-width: 2.5;
+            transition: r 0.3s ease, fill 0.3s ease;
+        }
+        .chart-point.highlight {
+            fill: var(--md-sys-color-primary); r: 5;
+        }
+        .line-chart-card.expanded .chart-point { r: 5; }
+        .line-chart-card.expanded .chart-point.highlight { r: 6; }
+
+        .chart-text-label {
+            font-size: 11px; font-weight: 700; font-family: 'Roboto Flex', 'Inter', monospace;
+            fill: var(--md-sys-color-on-surface-variant); text-anchor: middle;
+            transition: opacity 0.3s ease, fill 0.3s ease;
+        }
+        .chart-text-label.highlight { fill: var(--md-sys-color-primary); font-weight: 800;}
+        
+        .chart-text-label.secondary { opacity: 0; pointer-events: none; }
+        .line-chart-card.expanded .chart-text-label.secondary { opacity: 1; }
+
+        .chart-val-label {
+            font-size: 10px; font-weight: 800; font-family: 'Roboto Flex', 'Inter', monospace;
+            fill: var(--md-sys-color-primary); text-anchor: middle;
+            opacity: 0; transform: translateY(5px); transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .line-chart-card.expanded .chart-val-label { opacity: 1; transform: translateY(0); }
+
+        /* 新增：坐标轴虚线与刻度字体的样式 */
+        .chart-axis { stroke: var(--md-sys-color-outline-variant); stroke-width: 1.5; stroke-dasharray: 4 4; }
+        .chart-y-label { font-size: 10px; font-family: 'Roboto Flex', 'Inter', monospace; fill: var(--md-sys-color-outline-variant); text-anchor: end; font-weight: 600; }
+        
+        /* 新增：右上角保持展开的圆角矩形样式 */
+        .keep-expanded-zone { 
+    position: absolute; 
+    top: 0; 
+    right: 0; 
+    width: 64px; 
+    height: 64px; 
+    background: var(--md-sys-color-primary-container); 
+    border-radius: 0 0 0 64px; 
+    opacity: 0; 
+    pointer-events: none; 
+    transition: opacity 0.3s ease, transform 0.3s var(--md-sys-motion-easing-spring); 
+    transform: scale(0.9); 
+    z-index: 10; 
+    box-shadow: var(--md-sys-elevation-2); 
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 12px 10px 0 0;
+    cursor: pointer;
+}
+.keep-expanded-zone.show { 
+    opacity: 0.95; 
+    transform: scale(1); 
+    pointer-events: auto; 
+}
 
         @media (max-width: 360px) {
             .app-container { padding: 14px 14px 20px; gap: 14px; }
@@ -500,36 +559,34 @@
 </head>
 
 <script>
-// 监听来自 Service Worker 的更新通知（用于自动检测 index.html 变化）
 navigator.serviceWorker.addEventListener('message', event => {
     if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
         document.getElementById('updateSnackbar').classList.add('show');
     }
 });
-        // 注册 Service Worker 并监听无缝静默更新
-        let newWorker;
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').then(registration => {
-                    registration.addEventListener('updatefound', () => {
-                        newWorker = registration.installing;
-                        newWorker.addEventListener('statechange', () => {
-                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                document.getElementById('updateSnackbar').classList.add('show');
-                            }
-                        });
-                    });
-                }).catch(err => console.log('SW 注册失败:', err));
-
-                let refreshing = false;
-                navigator.serviceWorker.addEventListener('controllerchange', () => {
-                    if (refreshing) return;
-                    window.location.reload();
-                    refreshing = true;
+let newWorker;
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(registration => {
+            registration.addEventListener('updatefound', () => {
+                newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        document.getElementById('updateSnackbar').classList.add('show');
+                    }
                 });
             });
-        }
-    </script>
+        }).catch(err => console.log('SW 注册失败:', err));
+
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) return;
+            window.location.reload();
+            refreshing = true;
+        });
+    });
+}
+</script>
 <body>
     <div class="noise-overlay"></div>
     <div class="app-container">
@@ -555,7 +612,6 @@ navigator.serviceWorker.addEventListener('message', event => {
 
         <div class="mode-cards" id="modeCards">
             <div class="mode-indicator" id="modeIndicator"></div>
-
             <button class="mode-card active" data-mode="work">
                 <svg aria-hidden="true" class="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                 <span>工作</span>
@@ -594,20 +650,16 @@ navigator.serviceWorker.addEventListener('message', event => {
             <button class="btn-filled btn-stateful btn-idle" id="adjustMinusBtn" aria-label="减少1分钟">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </button>
-            
             <button class="btn-filled btn-stateful btn-running" id="resetBtn" aria-label="重置">
                 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
             </button>
-
             <button class="fab-primary" id="fabPlay" aria-label="开始/暂停">
                 <svg aria-hidden="true" id="playIcon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>
                 <svg aria-hidden="true" id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="5" y="3" width="5" height="18" rx="1.8"/><rect x="14" y="3" width="5" height="18" rx="1.8"/></svg>
             </button>
-
             <button class="btn-filled btn-stateful btn-running" id="skipBtn" aria-label="跳过">
                 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
             </button>
-
             <button class="btn-filled btn-stateful btn-idle" id="adjustPlusBtn" aria-label="增加1分钟">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </button>
@@ -629,7 +681,7 @@ navigator.serviceWorker.addEventListener('message', event => {
                     <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
                 </svg>
             </span>
-            发现新版本
+            <span id="labelUpdateAvail">发现新版本</span>
         </div>
         <button class="update-btn" id="updateBtn">立即更新</button>
     </div>
@@ -656,7 +708,6 @@ navigator.serviceWorker.addEventListener('message', event => {
                     <svg class="setting-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path></svg>
                     <span class="setting-label" id="labelVibrate">振动强度</span>
                 </div>
-                <!-- 替换为 md-slider -->
                 <md-slider id="vibrateSlider" min="0" max="100" value="80" aria-label="振动强度"></md-slider>
             </div>
             <div class="setting-row">
@@ -679,7 +730,32 @@ navigator.serviceWorker.addEventListener('message', event => {
     <div class="stats-overlay" id="statsOverlay"></div>
     <div class="stats-sheet" id="statsSheet">
         <div class="sheet-handle"></div>
-        <h2 class="sheet-title" id="labelStatsTitle">使用記錄與統計</h2>
+        <h2 class="sheet-title" id="labelStatsTitle">使用記録與統計</h2>
+        
+        <div class="lang-segment stats-time-segment">
+            <div class="lang-indicator" id="statsTimeIndicator"></div>
+            <button class="lang-btn active" data-range="today">今日</button>
+            <button class="lang-btn" data-range="week">周内</button>
+            <button class="lang-btn" data-range="month">月内</button>
+        </div>
+
+        <div class="stat-card line-chart-card range-today" id="lineChartCard">
+            <div class="chart-header">
+                <span class="chart-title" id="lineChartTitle">今日专注时长</span>
+                <span class="chart-hint">点击展开</span>
+                <div class="keep-expanded-zone" id="keepExpandedZone">
+    <svg id="closeChartBtn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;pointer-events:none;">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+</div>
+            </div>
+            <div class="chart-scroll-wrapper" id="chartScrollWrapper">
+                <div class="chart-inner" id="chartInner">
+                    </div>
+            </div>
+        </div>
+
         <div class="stats-list">
             <div class="stat-card">
                 <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
@@ -740,8 +816,7 @@ navigator.serviceWorker.addEventListener('message', event => {
             const settingsOverlay = document.getElementById('settingsOverlay');
             const bottomSheet = document.getElementById('bottomSheet');
             
-            const langBtns = document.querySelectorAll('.lang-btn');
-            // 现在使用 md-slider，直接通过 id 获取
+            const langBtns = document.querySelectorAll('#langSegment .lang-btn');
             const vibrateSlider = document.getElementById('vibrateSlider');
             const animSlider = document.getElementById('animSlider');
             const volumeSlider = document.getElementById('volumeSlider');
@@ -752,16 +827,20 @@ navigator.serviceWorker.addEventListener('message', event => {
             const statsEntryBtn = document.getElementById('statsEntryBtn');
             const statsOverlay = document.getElementById('statsOverlay');
             const statsSheet = document.getElementById('statsSheet');
+            
+            // 记录当前查看的图表范围
+            let currentChartRange = 'today';
 
             const CIRCUMFERENCE = 2 * Math.PI * 126;
             const MAX_SESSIONS = 4;
             
             const i18n = {
-                zh: { title: '番茄鐘', work: '工作', shortBreak: '短休息', longBreak: '长休息', settings: '设置', vibrate: '振动强度', animSpeed: '动画速度', volume: '提示音音量', language: '语言', toastWorkDone: '工作完成！休息一下吧。', toastBreakDone: '休息结束，开始工作吧。', statsEntry: '记录统计', statsTitle: '使用記錄與統計', times: '次', hours: '小时', mins: '分钟' },
-                en: { title: 'Pomodoro', work: 'Focus', shortBreak: 'Short Break', longBreak: 'Long Break', settings: 'Settings', vibrate: 'Haptics', animSpeed: 'Animation Speed', volume: 'Volume', language: 'Language', toastWorkDone: 'Focus done! Take a break.', toastBreakDone: 'Break over, let\'s focus.', statsEntry: 'Stats', statsTitle: 'Usage Statistics', times: 'times', hours: 'h', mins: 'min' },
-                ja: { title: 'ポモドーロ', work: '集中', shortBreak: '小休憩', longBreak: '長休憩', settings: '設定', vibrate: 'バイブレーション', animSpeed: 'アニメーション速度', volume: '音量', language: '言語', toastWorkDone: '集中完了！少し休みましょう。', toastBreakDone: '休憩終了！集中に戻りましょう。', statsEntry: '統計データ', statsTitle: '利用記録と統計', times: '回', hours: '時間', mins: '分' }
+                zh: { title: '番茄鐘', work: '工作', shortBreak: '短休息', longBreak: '长休息', settings: '設置', vibrate: '振动强度', animSpeed: '动画速度', volume: '提示音音量', language: '语言', toastWorkDone: '工作完成！休息一下吧。', toastBreakDone: '休息结束，开始工作吧。', statsEntry: '記録统计', statsTitle: '使用記録與統計', times: '次', hours: '小时', mins: '分钟', today: '今日', last7Days: '周内', last30Days: '月内', chartTitleToday: '今日专注时长', chartTitleWeek: '周内专注时长', chartTitleMonth: '月内专注时长', updateAvail: '发现新版本', updateBtn: '立即更新', days: ['一', '二', '三', '四', '五', '六', '日'], dayToday: '今', chartHint: '点击展开' },
+                en: { title: 'Pomodoro', work: 'Focus', shortBreak: 'Short Break', longBreak: 'Long Break', settings: 'Settings', vibrate: 'Haptics', animSpeed: 'Animation Speed', volume: 'Volume', language: 'Language', toastWorkDone: 'Focus done! Take a break.', toastBreakDone: 'Break over, let\'s focus.', statsEntry: 'Stats', statsTitle: 'Usage Statistics', times: 'times', hours: 'h', mins: 'min', today: 'Today', last7Days: 'This Week', last30Days: 'This Month', chartTitleToday: 'Today\'s Focus', chartTitleWeek: 'This Week\'s Focus', chartTitleMonth: 'This Month\'s Focus', updateAvail: 'Update Available', updateBtn: 'Update Now', days: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], dayToday: 'Tdy', chartHint: 'Tap to expand' },
+                ja: { title: 'ポモドーロ', work: '集中', shortBreak: '小休憩', longBreak: '長休憩', settings: '設定', vibrate: 'バイブレーション', animSpeed: 'アニメーション速度', volume: '音量', language: '言語', toastWorkDone: '集中完了！少し休みましょう。', toastBreakDone: '休憩終了！集中に戻りましょう。', statsEntry: '統計データ', statsTitle: '利用記録と統計', times: '回', hours: '時間', mins: '分', today: '今日', last7Days: '今週', last30Days: '今月', chartTitleToday: '今日の集中時間', chartTitleWeek: '今週の集中時間', chartTitleMonth: '今月の集中時間', updateAvail: '更新があります', updateBtn: 'すぐ更新', days: ['月', '火', '水', '木', '金', '土', '日'], dayToday: '今日', chartHint: 'タップで展開' },
             };
 
+            // 数据结构升级：增加 sessionLog 用于记录每一次的具体专注流水
             let appData = {
                 durations: { work: 25*60, shortBreak: 5*60, longBreak: 15*60 },
                 isDarkTheme: false,
@@ -770,7 +849,9 @@ navigator.serviceWorker.addEventListener('message', event => {
                     work: { count: 0, seconds: 0 },
                     shortBreak: { count: 0, seconds: 0 },
                     longBreak: { count: 0, seconds: 0 }
-                }
+                },
+                dailyStats: {},
+                sessionLog: [] // 核心升级：[{ts: 时间戳, mode: 'work', duration: 1500}, ...]
             };
 
             let currentMode = 'work';
@@ -787,71 +868,277 @@ navigator.serviceWorker.addEventListener('message', event => {
 
             function updateLangIndicator() {
                 const activeBtn = document.querySelector('.lang-btn.active');
-                const container = document.getElementById('langSegment');
                 const indicator = document.getElementById('langIndicator');
-                if (!activeBtn || !container || !indicator) return;
-                const containerRect = container.getBoundingClientRect();
-                const btnRect = activeBtn.getBoundingClientRect();
-                indicator.style.width = `${btnRect.width}px`;
-                indicator.style.transform = `translateX(${btnRect.left - containerRect.left}px)`;
+                if (!activeBtn || !indicator) return;
+                indicator.style.width = `${activeBtn.offsetWidth}px`;
+                indicator.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
             }
 
             function applyLanguage(direction = null) {
-    const t = getT();
-    const textElements = [
-        { el: document.querySelector('.top-card-title'), text: t.title },
-        { el: document.querySelector('[data-mode="work"] span'), text: t.work },
-        { el: document.querySelector('[data-mode="shortBreak"] span'), text: t.shortBreak },
-        { el: document.querySelector('[data-mode="longBreak"] span'), text: t.longBreak },
-        { el: timeLabel, text: t[currentMode] },
-        { el: document.getElementById('labelSettingsTitle'), text: t.settings },
-        { el: document.getElementById('labelLang'), text: t.language },
-        { el: document.getElementById('labelVibrate'), text: t.vibrate },
-        { el: document.getElementById('labelAnim'), text: t.animSpeed },
-        { el: document.getElementById('labelVolume'), text: t.volume },
-        { el: document.getElementById('labelStatsEntry'), text: t.statsEntry },
-        { el: document.getElementById('labelStatsTitle'), text: t.statsTitle },
-        { el: document.getElementById('statWorkLabel'), text: t.work },
-        { el: document.getElementById('statShortBreakLabel'), text: t.shortBreak },
-        { el: document.getElementById('statLongBreakLabel'), text: t.longBreak },
-        { el: document.getElementById('statWorkCountUnit'), text: t.times },
-        { el: document.getElementById('statShortBreakCountUnit'), text: t.times },
-        { el: document.getElementById('statLongBreakCountUnit'), text: t.times }
-    ];
+                const t = getT();
+                
+                // 根据当前模式渲染图表标题
+                let chartTitleStr = t.chartTitleToday;
+                if(currentChartRange === 'week') chartTitleStr = t.chartTitleWeek;
+                if(currentChartRange === 'month') chartTitleStr = t.chartTitleMonth;
 
-    langBtns.forEach(btn => { btn.classList.toggle('active', parseInt(btn.dataset.lang) === appData.settings.lang); });
+                const textElements = [
+                    { el: document.querySelector('.top-card-title'), text: t.title },
+                    { el: document.querySelector('[data-mode="work"] span'), text: t.work },
+                    { el: document.querySelector('[data-mode="shortBreak"] span'), text: t.shortBreak },
+                    { el: document.querySelector('[data-mode="longBreak"] span'), text: t.longBreak },
+                    { el: timeLabel, text: t[currentMode] },
+                    { el: document.getElementById('labelSettingsTitle'), text: t.settings },
+                    { el: document.getElementById('labelLang'), text: t.language },
+                    { el: document.getElementById('labelVibrate'), text: t.vibrate },
+                    { el: document.getElementById('labelAnim'), text: t.animSpeed },
+                    { el: document.getElementById('labelVolume'), text: t.volume },
+                    { el: document.getElementById('labelStatsEntry'), text: t.statsEntry },
+{ el: document.querySelector('.chart-hint'), text: t.chartHint },
+                    { el: document.getElementById('labelStatsTitle'), text: t.statsTitle },
+                    { el: document.getElementById('statWorkLabel'), text: t.work },
+                    { el: document.getElementById('statShortBreakLabel'), text: t.shortBreak },
+                    { el: document.getElementById('statLongBreakLabel'), text: t.longBreak },
+                    { el: document.getElementById('statWorkCountUnit'), text: t.times },
+                    { el: document.getElementById('statShortBreakCountUnit'), text: t.times },
+                    { el: document.getElementById('statLongBreakCountUnit'), text: t.times },
+                    { el: document.querySelector('.stats-time-segment [data-range="today"]'), text: t.today },
+                    { el: document.querySelector('.stats-time-segment [data-range="week"]'), text: t.last7Days },
+                    { el: document.querySelector('.stats-time-segment [data-range="month"]'), text: t.last30Days },
+                    { el: document.getElementById('lineChartTitle'), text: chartTitleStr },
+                    { el: document.getElementById('labelUpdateAvail'), text: t.updateAvail },
+                    { el: document.getElementById('updateBtn'), text: t.updateBtn }
+                ];
 
-    if (direction) {
-        const outClass = direction === 'left' ? 'slide-out-left' : 'slide-out-right';
-        const inClass = direction === 'left' ? 'slide-in-right' : 'slide-in-left';
+                langBtns.forEach(btn => { btn.classList.toggle('active', parseInt(btn.dataset.lang) === appData.settings.lang); });
 
-        textElements.forEach(item => {
-            item.el.classList.remove('slide-in-left', 'slide-in-right');
-            item.el.classList.add(outClass);
-        });
+                if (direction) {
+                    const outClass = direction === 'left' ? 'slide-out-left' : 'slide-out-right';
+                    const inClass = direction === 'left' ? 'slide-in-right' : 'slide-in-left';
 
-        setTimeout(() => {
-            textElements.forEach(item => {
-                item.el.textContent = item.text;
-                item.el.classList.remove(outClass);
-                item.el.classList.add(inClass);
-            });
-            updateStatsUI();
-            requestAnimationFrame(() => {
-                updateLangIndicator();
-                updateIndicatorPosition();
-            });
-            setTimeout(() => { textElements.forEach(item => item.el.classList.remove(inClass)); }, 350);
-        }, 200); 
-    } else {
-        textElements.forEach(item => item.el.textContent = item.text);
-        updateStatsUI();
-        requestAnimationFrame(() => {
-            updateLangIndicator();
-            updateIndicatorPosition();
-        });
+                    textElements.forEach(item => {
+                        item.el.classList.remove('slide-in-left', 'slide-in-right');
+                        item.el.classList.add(outClass);
+                    });
+
+                    setTimeout(() => {
+                        textElements.forEach(item => {
+                            item.el.textContent = item.text;
+                            item.el.classList.remove(outClass);
+                            item.el.classList.add(inClass);
+                        });
+                        updateStatsUI();
+                        renderLineChart(); // 重新渲染以更新底部的横坐标文字
+                        requestAnimationFrame(() => {
+                            updateLangIndicator();
+                            updateIndicatorPosition();
+                        });
+                        setTimeout(() => { textElements.forEach(item => item.el.classList.remove(inClass)); }, 350);
+                    }, 200); 
+                } else {
+                    textElements.forEach(item => item.el.textContent = item.text);
+                    updateStatsUI();
+                    renderLineChart();
+                    requestAnimationFrame(() => {
+                        updateLangIndicator();
+                        updateIndicatorPosition();
+                    });
+                }
+            }
+
+            // ======== 核心：动态折线图渲染逻辑 ========
+            function renderLineChart() {
+                const inner = document.getElementById('chartInner');
+                const titleEl = document.getElementById('lineChartTitle');
+                if (!inner || !appData.sessionLog) return;
+                
+                const t = getT();
+                const now = new Date();
+                let buckets = [];
+                let labels = [];
+                let highlightIdx = -1;
+                let defaultMax = 60; // 默认最大Y轴高度（防止太平）
+
+                // 设置图表标题
+                if(currentChartRange === 'today') titleEl.textContent = t.chartTitleToday;
+                else if(currentChartRange === 'week') titleEl.textContent = t.chartTitleWeek;
+                else if(currentChartRange === 'month') titleEl.textContent = t.chartTitleMonth;
+
+                // 1. 数据桶聚类 (Bucketing)
+                if (currentChartRange === 'today') {
+                    // 今日：0点到24点 (24个格子)
+                    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+                    buckets = new Array(24).fill(0);
+                    for(let i=0; i<24; i++) labels.push(i.toString());
+                    
+                    appData.sessionLog.forEach(log => {
+                        if (log.mode === 'work' && log.ts >= startOfDay && log.ts < startOfDay + 86400000) {
+                            const hr = new Date(log.ts).getHours();
+                            buckets[hr] += log.duration / 60; // 转分钟
+                        }
+                    });
+                    highlightIdx = now.getHours();
+                    defaultMax = 60; 
+
+                } else if (currentChartRange === 'week') {
+                    // 周内：周一到周日 (7个格子)
+                    const dayOfWeek = (now.getDay() + 6) % 7; // 转为 周一=0, 周日=6
+                    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+                    const startOfWeek = startOfDay - (dayOfWeek * 86400000);
+                    buckets = new Array(7).fill(0);
+                    labels = t.days; // 词典里的周一到周日
+                    
+                    appData.sessionLog.forEach(log => {
+                        if (log.mode === 'work' && log.ts >= startOfWeek && log.ts < startOfWeek + 7*86400000) {
+                            const d = (new Date(log.ts).getDay() + 6) % 7;
+                            buckets[d] += log.duration / 60;
+                        }
+                    });
+                    highlightIdx = dayOfWeek;
+                    defaultMax = 120; // 周视图最高期望动态值
+
+                } else if (currentChartRange === 'month') {
+                    // 月内：1号到月底 (28~31个格子)
+                    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+                    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+                    buckets = new Array(daysInMonth).fill(0);
+                    for(let i=1; i<=daysInMonth; i++) labels.push(i.toString());
+
+                    appData.sessionLog.forEach(log => {
+                        if (log.mode === 'work' && log.ts >= startOfMonth && log.ts < startOfMonth + daysInMonth*86400000) {
+                            const dateIdx = new Date(log.ts).getDate() - 1;
+                            buckets[dateIdx] += log.duration / 60;
+                        }
+                    });
+                    highlightIdx = now.getDate() - 1;
+                    defaultMax = 180; 
+                }
+
+// 2. 动态自适应Y轴
+const dataMax = Math.max(...buckets);
+const maxY = Math.max(dataMax, defaultMax);
+
+// 3. 绘制 SVG（使用固定 viewBox，避免展开时左侧空白）
+const len = buckets.length;
+const vbW = 1000, vbH = 300;          // viewBox 宽高
+const padLeft = 60, padRight = 40;    // 左右留白（固定像素，不受宽度影响）
+const topY = 30, bottomY = 260;       // 垂直范围
+const graphW = vbW - padLeft - padRight; // 实际绘图宽度
+const graphH = bottomY - topY;
+
+let pathD = "", areaD = "", pointsHTML = "", labelsHTML = "";
+
+// 有数据时生成折线、区域、节点、数值标签
+if (dataMax > 0) {
+    buckets.forEach((val, i) => {
+        const x = padLeft + (i / (len - 1)) * graphW;
+        const y = bottomY - (val / maxY) * graphH;
+
+        if (i === 0) {
+            pathD += `M ${x} ${y} `;
+            areaD += `M ${x} ${bottomY} L ${x} ${y} `;
+        } else {
+            pathD += `L ${x} ${y} `;
+            areaD += `L ${x} ${y} `;
+        }
+
+        const isHigh = (i === highlightIdx);
+        pointsHTML += `<circle cx="${x}" cy="${y}" r="4" class="chart-point ${isHigh?'highlight':''}"></circle>`;
+
+        if (val > 0) {
+            labelsHTML += `<text x="${x}" y="${y - 8}" class="chart-val-label">${Math.round(val)}</text>`;
+        }
+    });
+    areaD += `L ${vbW - padRight} ${bottomY} Z`;
+}
+
+// 横坐标标签（始终显示）
+buckets.forEach((val, i) => {
+    const x = padLeft + (i / (len - 1)) * graphW;
+    const isHigh = (i === highlightIdx);
+    let isPrimary = false;
+    if (currentChartRange === 'today' && (i === 0 || i === 6 || i === 12 || i === 18 || i === 23)) isPrimary = true;
+    if (currentChartRange === 'week') isPrimary = true;
+    if (currentChartRange === 'month' && (i === 0 || i === 6 || i === 13 || i === 20 || i === 27 || i === len-1)) isPrimary = true;
+
+    labelsHTML += `<text x="${x}" y="${bottomY + 24}" class="chart-text-label ${isPrimary?'primary':'secondary'} ${isHigh?'highlight':''}">${labels[i]}</text>`;
+});
+
+// 坐标轴与刻度
+const axisHTML = `
+    <line x1="${padLeft}" y1="${bottomY}" x2="${vbW - padRight}" y2="${bottomY}" class="chart-axis" />
+    <text x="${padLeft - 8}" y="${bottomY + 5}" class="chart-y-label">0</text>
+    <line x1="${padLeft}" y1="${topY + graphH/2}" x2="${vbW - padRight}" y2="${topY + graphH/2}" class="chart-axis" opacity="0.3" />
+    <text x="${padLeft - 8}" y="${topY + graphH/2 + 5}" class="chart-y-label">${Math.round(maxY / 2)}${currentChartRange === 'today' ? 'm' : 'h'}</text>
+    <line x1="${padLeft}" y1="${topY}" x2="${vbW - padRight}" y2="${topY}" class="chart-axis" opacity="0.3" />
+    <text x="${padLeft - 8}" y="${topY + 5}" class="chart-y-label">${Math.round(maxY)}${currentChartRange === 'today' ? 'm' : 'h'}</text>
+`;
+
+inner.innerHTML = `
+    <svg class="line-chart-svg" viewBox="0 0 ${vbW} ${vbH}" preserveAspectRatio="xMinYMid meet">
+        <defs>
+            <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--md-sys-color-primary-container)" stop-opacity="0.8"/>
+                <stop offset="100%" stop-color="var(--md-sys-color-primary-container)" stop-opacity="0.0"/>
+            </linearGradient>
+        </defs>
+        ${axisHTML}
+        ${dataMax > 0 ? `<path d="${areaD}" class="chart-area" />
+        <path d="${pathD}" class="chart-line" />
+        ${pointsHTML}` : ''}
+        ${labelsHTML}
+    </svg>
+`;
+            }
+
+            // ======== 渐进式展开与手势逻辑 ========
+            const chartCard = document.getElementById('lineChartCard');
+            const scrollWrapper = document.getElementById('chartScrollWrapper');
+            const keepExpandedZone = document.getElementById('keepExpandedZone');
+            let isExpanded = false;
+
+            function collapseChart() {
+    if(!isExpanded) return;
+    isExpanded = false;
+    chartCard.classList.remove('expanded');
+    keepExpandedZone.classList.remove('show');
+    // 折叠后恢复宽度为100%
+    const inner = document.getElementById('chartInner');
+    if (inner) inner.style.width = '100%';
+    vibrateTap();
+}
+
+            function expandChart() {
+    if(isExpanded) return;
+    vibrateTap();
+    isExpanded = true;
+    chartCard.classList.add('expanded');
+    keepExpandedZone.classList.add('show');
+    const inner = document.getElementById('chartInner');
+    if (inner && scrollWrapper) {
+        let pointCount;
+        if (currentChartRange === 'today') pointCount = 24;
+        else if (currentChartRange === 'week') pointCount = 7;
+        else {
+            const now = new Date();
+            pointCount = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+        }
+        // 宽度至少和容器一样大，保证周视图不会缩小，今日/月内可按需加宽
+        const containerWidth = scrollWrapper.clientWidth;
+        inner.style.width = Math.max(pointCount * 40, containerWidth) + 'px';
     }
 }
+            
+
+
+
+            
+
+            
+
+            
+
+
 
             function updateStatsUI() {
                 const t = getT();
@@ -880,20 +1167,15 @@ navigator.serviceWorker.addEventListener('message', event => {
                     try { 
                         const parsed = JSON.parse(saved);
                         if (parsed.isDarkTheme !== undefined) appData.isDarkTheme = parsed.isDarkTheme;
-                        if (parsed.settings) {
-                            appData.settings = { ...appData.settings, ...parsed.settings };
-                        }
-                        if (parsed.durations) {
-                            appData.durations = { ...appData.durations, ...parsed.durations };
-                        }
-                        if (parsed.history) {
-                            appData.history = { ...appData.history, ...parsed.history };
-                        }
+                        if (parsed.settings) appData.settings = { ...appData.settings, ...parsed.settings };
+                        if (parsed.durations) appData.durations = { ...appData.durations, ...parsed.durations };
+                        if (parsed.history) appData.history = { ...appData.history, ...parsed.history };
+                        if (parsed.dailyStats) appData.dailyStats = parsed.dailyStats; // 遗留数据向下兼容
+                        if (parsed.sessionLog) appData.sessionLog = parsed.sessionLog;
                     } catch(e) { console.error("读取存档失败", e); }
                 }
                 
                 document.body.classList.toggle('dark', appData.isDarkTheme);
-                                // 同步 md-slider 的值（等组件就绪再设值）
                 requestAnimationFrame(() => {
                     vibrateSlider.value = appData.settings.vibrate;
                     animSlider.value = appData.settings.anim;
@@ -904,7 +1186,6 @@ navigator.serviceWorker.addEventListener('message', event => {
                 applyAnimSpeed();
                 applyLanguage();
                 switchMode('work');
-                
                 requestAnimationFrame(updateIndicatorPosition);
             }
 
@@ -962,9 +1243,7 @@ navigator.serviceWorker.addEventListener('message', event => {
 
             function updateDisplay() {
                 const formattedTime = formatTime(remainingSeconds);
-                if (timeDisplay.style.display !== 'none') {
-                    timeDisplay.textContent = formattedTime;
-                }
+                if (timeDisplay.style.display !== 'none') { timeDisplay.textContent = formattedTime; }
                 document.title = `${formattedTime} · ${getT()[currentMode]} - ${getT().title}`;
 
                 const progress = 1 - (remainingSeconds/totalSeconds);
@@ -1070,12 +1349,11 @@ navigator.serviceWorker.addEventListener('message', event => {
 
             function resetTimer() { 
                 autoStartNext = false;
-                const was = isRunning; 
                 isRunning = false; 
                 clearTimer(); 
                 releaseWakeLock();
                 startTimestamp = null; elapsedBeforePause = 0; remainingSeconds = totalSeconds; 
-                if(was) playResetSound(); 
+                playResetSound(); 
                 progressCircle.classList.remove('warning','urgent'); timeDisplay.classList.remove('warning','urgent'); 
                 timeDisplay.style.fontVariationSettings = `"wght" 700, "wdth" 100`;
                 refreshUI(); 
@@ -1094,23 +1372,34 @@ navigator.serviceWorker.addEventListener('message', event => {
                     vibrateComplete();
                     if (Notification.permission === 'granted') {
                         const t = getT();
-                        const title = t.title;
-                        const body = currentMode === 'work' ? t.toastWorkDone : t.toastBreakDone;
-                        new Notification(title, { body, icon: './icon.png', silent: true });
+                        new Notification(t.title, { body: currentMode === 'work' ? t.toastWorkDone : t.toastBreakDone, icon: './icon.png', silent: true });
                     }
-                    if(!appData.history) {
-                        appData.history = { work: {count:0,seconds:0}, shortBreak: {count:0,seconds:0}, longBreak: {count:0,seconds:0} };
-                    }
+                    
                     appData.history[currentMode].count += 1;
                     appData.history[currentMode].seconds += totalSeconds;
+                    
+                    // 新系统：打入底层数据流
+                    if(!appData.sessionLog) appData.sessionLog = [];
+                    appData.sessionLog.push({
+                        ts: Date.now(),
+                        mode: currentMode,
+                        duration: totalSeconds
+                    });
+                    
+                    // 自动清理超过 60 天的数据，避免存储过大
+                    const sixtyDaysAgo = Date.now() - 60 * 24 * 3600 * 1000;
+                    appData.sessionLog = appData.sessionLog.filter(log => log.ts > sixtyDaysAgo);
+                    
                     saveData();
                     updateStatsUI(); 
+                    if(document.getElementById('statsSheet').classList.contains('active')) {
+                        renderLineChart(); // 若面板开着，实时更新折线图
+                    }
                 }
                 
                 const t = getT();
                 if(currentMode === 'work') { 
-                    cycleCount++;
-                    showToast(t.toastWorkDone); 
+                    cycleCount++; showToast(t.toastWorkDone); 
                     if(cycleCount >= MAX_SESSIONS) { switchMode('longBreak'); } else { switchMode('shortBreak'); }
                 } else { 
                     showToast(t.toastBreakDone); switchMode('work');
@@ -1128,17 +1417,12 @@ navigator.serviceWorker.addEventListener('message', event => {
             }
             
             function skipCurrent() { 
-    if(isRunning) {
-        // 直接停止计时，不放暂停音效
-        isRunning = false;
-        clearTimer();
-        releaseWakeLock();
-        startTimestamp = null;
-    }
-    autoStartNext = false;
-    remainingSeconds = 0; totalSeconds = appData.durations[currentMode]; elapsedBeforePause = totalSeconds; 
-    updateDisplay(); completeTimer(true); 
-}
+                if(isRunning) { isRunning = false; clearTimer(); releaseWakeLock(); startTimestamp = null; }
+                autoStartNext = false;
+                remainingSeconds = 0; totalSeconds = appData.durations[currentMode]; elapsedBeforePause = totalSeconds; 
+                updateDisplay(); completeTimer(true); 
+            }
+            
             function adjustDuration(deltaSecs) { 
                 if(isRunning) return; 
                 autoStartNext = false;
@@ -1172,49 +1456,20 @@ navigator.serviceWorker.addEventListener('message', event => {
             }
 
             function handleSettingsChange(e) {
-                const id = e.target.id;
-                const val = parseInt(e.target.value);
-                
-                if (id === 'vibrateSlider') { 
-                    appData.settings.vibrate = val; 
-                    if(navigator.vibrate) navigator.vibrate(Math.max(1, Math.floor(val/10))); 
-                }
+                const id = e.target.id; const val = parseInt(e.target.value);
+                if (id === 'vibrateSlider') { appData.settings.vibrate = val; if(navigator.vibrate) navigator.vibrate(Math.max(1, Math.floor(val/10))); }
                 if (id === 'animSlider') { appData.settings.anim = val; applyAnimSpeed(); }
-                if (id === 'volumeSlider') { 
-                    appData.settings.volume = val; 
-                    updateVolumeIcon(val);
-                    if(val > 0) playTone(400 + val*4, 0.05); 
-                }
-                
+                if (id === 'volumeSlider') { appData.settings.volume = val; updateVolumeIcon(val); if(val > 0) playTone(400 + val*4, 0.05); }
                 saveData();
             }
 
-            // 内联编辑核心逻辑
             function parseTimeString(str) {
-                str = str.replace(/\D/g, '');
-                if(!str) return -1;
-                let val = parseInt(str, 10);
-                if(val === 0) return 0;
-                
-                let strVal = val.toString();
-                let sec = 0, min = 0;
-                
-                if(strVal.length <= 2) {
-                    sec = parseInt(strVal, 10);
-                } else {
-                    sec = parseInt(strVal.slice(-2), 10);
-                    min = parseInt(strVal.slice(0, -2), 10);
-                }
-                
-                if(sec > 59) {
-                    min += Math.floor(sec / 60);
-                    sec = sec % 60;
-                }
-                
-                if(min > 120) {
-                    min = 120; sec = 0;
-                }
-                
+                str = str.replace(/\D/g, ''); if(!str) return -1;
+                let val = parseInt(str, 10); if(val === 0) return 0;
+                let strVal = val.toString(); let sec = 0, min = 0;
+                if(strVal.length <= 2) { sec = parseInt(strVal, 10); } else { sec = parseInt(strVal.slice(-2), 10); min = parseInt(strVal.slice(0, -2), 10); }
+                if(sec > 59) { min += Math.floor(sec / 60); sec = sec % 60; }
+                if(min > 120) { min = 120; sec = 0; }
                 return min * 60 + sec;
             }
 
@@ -1225,23 +1480,17 @@ navigator.serviceWorker.addEventListener('message', event => {
 
                 vibrateTap(); 
                 const currentSecs = appData.durations[currentMode];
-                
                 const input = document.createElement('input');
-                input.type = 'tel';
-                input.id = 'timeInput';
-                
-                let m = Math.floor(currentSecs / 60);
-                let s = Math.floor(currentSecs % 60);
+                input.type = 'tel'; input.id = 'timeInput';
+                let m = Math.floor(currentSecs / 60); let s = Math.floor(currentSecs % 60);
                 input.value = String(m).padStart(2, '0') + String(s).padStart(2, '0');
-                
                 input.className = 'time-display-input'; 
                 
                 timeDisplay.style.display = 'none';
                 timeDisplay.parentNode.insertBefore(input, timeDisplay);
                 
                 input.focus(); 
-                let len = input.value.length;
-                input.setSelectionRange(len, len);
+                let len = input.value.length; input.setSelectionRange(len, len);
 
                 const finishEdit = () => {
                     let parsedSecs = parseTimeString(input.value);
@@ -1250,17 +1499,11 @@ navigator.serviceWorker.addEventListener('message', event => {
 
                     if (parsedSecs !== currentSecs) {
                         appData.durations[currentMode] = parsedSecs;
-                        totalSeconds = parsedSecs;
-                        remainingSeconds = totalSeconds;
-                        elapsedBeforePause = 0;
-                        saveData();
-                        playTickSound(); 
+                        totalSeconds = parsedSecs; remainingSeconds = totalSeconds; elapsedBeforePause = 0;
+                        saveData(); playTickSound(); 
                     }
-                    
-                    input.remove();
-                    timeDisplay.style.display = '';
-                    updateDisplay();
-                    updateFabState();
+                    input.remove(); timeDisplay.style.display = '';
+                    updateDisplay(); updateFabState();
                 };
 
                 input.addEventListener('blur', finishEdit);
@@ -1271,7 +1514,6 @@ navigator.serviceWorker.addEventListener('message', event => {
                 btn.addEventListener('click', (e) => {
                     const newLangIdx = parseInt(e.target.dataset.lang);
                     const oldLangIdx = appData.settings.lang;
-                    
                     if(oldLangIdx !== newLangIdx) {
                         const direction = newLangIdx > oldLangIdx ? 'left' : 'right';
                         appData.settings.lang = newLangIdx;
@@ -1280,12 +1522,9 @@ navigator.serviceWorker.addEventListener('message', event => {
                 });
             });
 
-            // 为 md-slider 添加事件监听
             [vibrateSlider, animSlider, volumeSlider].forEach(slider => {
                 slider.addEventListener('input', handleSettingsChange);
-                slider.addEventListener('change', () => { 
-                    if(slider.id === 'vibrateSlider') vibrateTest(); 
-                });
+                slider.addEventListener('change', () => { if(slider.id === 'vibrateSlider') vibrateTest(); });
             });
 
             function createRipple(e) {
@@ -1303,26 +1542,109 @@ navigator.serviceWorker.addEventListener('message', event => {
             
             fabPlay.addEventListener('pointerdown',()=>{ fabPlay.classList.add('bounce'); fabPlay.addEventListener('animationend',()=>fabPlay.classList.remove('bounce'),{once:true}); });
             
-            settingsToggle.addEventListener('click',()=>{ settingsOverlay.classList.add('active'); bottomSheet.classList.add('active'); });
+            settingsToggle.addEventListener('click',()=>{ 
+                settingsOverlay.classList.add('active'); 
+                bottomSheet.classList.add('active'); 
+                requestAnimationFrame(updateLangIndicator);
+            });
             settingsOverlay.addEventListener('click',()=>{ settingsOverlay.classList.remove('active'); bottomSheet.classList.remove('active'); });
             
-            statsEntryBtn.addEventListener('click',()=>{ statsOverlay.classList.add('active'); statsSheet.classList.add('active'); updateStatsUI(); });
-            statsOverlay.addEventListener('click',()=>{ statsOverlay.classList.remove('active'); statsSheet.classList.remove('active'); });
+            function updateStatsTimeIndicator() {
+                const activeBtn = document.querySelector('.stats-time-segment .lang-btn.active');
+                const indicator = document.getElementById('statsTimeIndicator');
+                if (!activeBtn || !indicator) return;
+                indicator.style.width = `${activeBtn.offsetWidth}px`;
+                indicator.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
+            }
+
+            const statsTimeBtns = Array.from(document.querySelectorAll('.stats-time-segment .lang-btn'));
+            statsTimeBtns.forEach((btn, index) => {
+                btn.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('active')) return; 
+                    
+                    const currentIndex = statsTimeBtns.findIndex(b => b.classList.contains('active'));
+                    const direction = index > currentIndex ? 'left' : 'right';
+                    
+                    statsTimeBtns.forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    updateStatsTimeIndicator();
+                    vibrateTap();
+
+              // 更新全局状态并控制卡片的宽度类
+currentChartRange = e.target.dataset.range;
+chartCard.className = `stat-card line-chart-card range-${currentChartRange} ${isExpanded ? 'expanded' : ''}`;
+if (isExpanded) {
+    const innerChartEl = document.getElementById('chartInner');
+    if (innerChartEl && scrollWrapper) {
+        let ptCount;
+        if (currentChartRange === 'today') ptCount = 24;
+        else if (currentChartRange === 'week') ptCount = 7;
+        else {
+            const now = new Date();
+            ptCount = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+        }
+        innerChartEl.style.width = Math.max(ptCount * 40, scrollWrapper.clientWidth) + 'px';
+    }
+}
+                    
+                    
+                    // 动画处理：平滑滑出再滑入
+                    const innerChart = document.getElementById('chartInner');
+                    const titleEl = document.getElementById('lineChartTitle');
+                    const outClass = direction === 'left' ? 'slide-out-left' : 'slide-out-right';
+                    const inClass = direction === 'left' ? 'slide-in-right' : 'slide-in-left';
+                    
+                    innerChart.classList.add(outClass);
+                    titleEl.classList.add(outClass);
+                    
+                    setTimeout(() => {
+                        renderLineChart(); // 重绘新周期的图表
+                        
+                        innerChart.classList.remove(outClass);
+                        innerChart.classList.add(inClass);
+                        titleEl.classList.remove(outClass);
+                        titleEl.classList.add(inClass);
+                        
+                        setTimeout(() => {
+                            innerChart.classList.remove(inClass);
+                            titleEl.classList.remove(inClass);
+                        }, 350);
+                    }, 200);
+                });
+            });
+// 点击图表卡片本身 展开
+chartCard.addEventListener('click', (e) => {
+    if (!isExpanded) {
+        expandChart();
+    }
+});
+
+// 点击右上角 X 图标 折叠（阻止冒泡，防止触发上面卡片点击）
+keepExpandedZone.addEventListener('click', (e) => {
+    e.stopPropagation();
+    collapseChart();
+});
+            statsEntryBtn.addEventListener('click',()=>{ 
+                statsOverlay.classList.add('active'); 
+                statsSheet.classList.add('active'); 
+                updateStatsUI(); 
+                renderLineChart(); 
+                requestAnimationFrame(updateStatsTimeIndicator);
+            });
+            statsOverlay.addEventListener('click',()=>{ 
+                statsOverlay.classList.remove('active'); 
+                statsSheet.classList.remove('active');
+                // 面板关闭时，将折线图状态还原回折叠状态
+                if(isExpanded) collapseChart();
+            });
 
             const updateBtn = document.getElementById('updateBtn');
             if(updateBtn) {
-                updateBtn.addEventListener('click', () => {
-                    vibrateConfirm();
-                    if (newWorker) {
-                        newWorker.postMessage({ type: 'SKIP_WAITING' });
-                    }
-                });
+                updateBtn.addEventListener('click', () => { vibrateConfirm(); if (newWorker) newWorker.postMessage({ type: 'SKIP_WAITING' }); });
             }
 
             fabPlay.addEventListener('click',()=>{ 
-                if (Notification.permission === 'default') {
-                    Notification.requestPermission();
-                }
+                if (Notification.permission === 'default') Notification.requestPermission();
                 if(isRunning){ pauseTimer(); vibrateCancel(); } else startTimer(); 
             });
             resetBtn.addEventListener('click',()=>{ resetTimer(); vibrateReset(); });
@@ -1332,10 +1654,7 @@ navigator.serviceWorker.addEventListener('message', event => {
                 card.addEventListener('click',()=>{ 
                     if(isRunning) return; 
                     const mode=card.dataset.mode; 
-                    if(mode && mode !== currentMode){ 
-                        autoStartNext = false;
-                        vibrateTap(); switchMode(mode); 
-                    } 
+                    if(mode && mode !== currentMode){ autoStartNext = false; vibrateTap(); switchMode(mode); } 
                 }); 
             });
             
@@ -1344,24 +1663,17 @@ navigator.serviceWorker.addEventListener('message', event => {
             
             let longPressTimeout = null; let longPressInterval = null;
             function setupLongPress(btn, delta) { 
-                btn.addEventListener('pointerdown', () => { 
-                    longPressTimeout = setTimeout(() => { vibrateLongPress(); longPressInterval = setInterval(() => { adjustDuration(delta); }, 120); }, 400); 
-                }); 
-                const clear = () => { 
-                    if (longPressTimeout) { clearTimeout(longPressTimeout); longPressTimeout = null; } 
-                    if (longPressInterval) { clearInterval(longPressInterval); longPressInterval = null; } 
-                }; 
+                btn.addEventListener('pointerdown', () => { longPressTimeout = setTimeout(() => { vibrateLongPress(); longPressInterval = setInterval(() => { adjustDuration(delta); }, 120); }, 400); }); 
+                const clear = () => { if (longPressTimeout) { clearTimeout(longPressTimeout); longPressTimeout = null; } if (longPressInterval) { clearInterval(longPressInterval); longPressInterval = null; } }; 
                 btn.addEventListener('pointerup', clear); btn.addEventListener('pointerleave', clear); btn.addEventListener('pointercancel', clear); 
             }
-            
-            setupLongPress(adjustMinusBtn, -60); 
-            setupLongPress(adjustPlusBtn, 60);
+            setupLongPress(adjustMinusBtn, -60); setupLongPress(adjustPlusBtn, 60);
             
             themeToggle.addEventListener('click',()=>{ toggleTheme(); vibrateTap(); });
             
             document.addEventListener('keydown',(e)=>{ if(e.code==='Space'&&e.target===document.body){ e.preventDefault(); isRunning?pauseTimer():startTimer(); isRunning?vibrateCancel():vibrateConfirm(); } else if(e.code==='KeyR'&&e.target===document.body){ e.preventDefault(); resetTimer(); vibrateReset(); } });
-            document.addEventListener('visibilitychange',()=>{ if(!document.hidden && isRunning && wakeLock === null) { requestWakeLock(); } });
-            window.addEventListener('resize', () => { updateIndicatorPosition(); updateLangIndicator(); });
+            document.addEventListener('visibilitychange',()=>{ if(!document.hidden && isRunning && wakeLock === null) requestWakeLock(); });
+            window.addEventListener('resize', () => { updateIndicatorPosition(); updateLangIndicator(); updateStatsTimeIndicator(); renderLineChart(); });
 
             progressCircle.style.strokeDasharray = CIRCUMFERENCE; progressCircle.style.strokeDashoffset = CIRCUMFERENCE;
             progressTail.setAttribute('stroke-dasharray', `30 ${CIRCUMFERENCE}`); progressTail.setAttribute('stroke-dashoffset', CIRCUMFERENCE);
