@@ -23,13 +23,12 @@
     </script>
 
     <style>
-    
-    .chart-scroll-wrapper {
-    overflow-x: hidden;
-}
-.line-chart-card.expanded .chart-scroll-wrapper {
-    overflow-x: auto;
-}
+        .chart-scroll-wrapper {
+            overflow-x: hidden;
+        }
+        .line-chart-card.expanded .chart-scroll-wrapper {
+            overflow-x: auto;
+        }
         :root {
             /* ====== 主色调系列（核心视觉强调色） ====== */
             --md-sys-color-primary: #A33B31;
@@ -180,11 +179,11 @@
         }
         body.dark .mode-cards { box-shadow: inset 0px 3px 8px rgba(0,0,0,0.3); }
 
-.mode-indicator {
-    position: absolute; top: 6px; bottom: 6px; left: 0; width: 33.33%; border-radius: 30px;
-    background-color: var(--md-sys-color-primary-container); box-shadow: var(--md-sys-elevation-1); z-index: 0;
-    transition: transform 0.6s var(--md-sys-motion-easing-emphasized), width 0.6s var(--md-sys-motion-easing-emphasized), background-color 0.4s ease;
-}
+        .mode-indicator {
+            position: absolute; top: 6px; bottom: 6px; left: 0; width: 33.33%; border-radius: 30px;
+            background-color: var(--md-sys-color-primary-container); box-shadow: var(--md-sys-elevation-1); z-index: 0;
+            transition: transform 0.6s var(--md-sys-motion-easing-emphasized), width 0.6s var(--md-sys-motion-easing-emphasized), background-color 0.4s ease;
+        }
 
         .mode-card {
             flex: 1; padding: 14px 4px; background: transparent; border: none; font-family: inherit;
@@ -209,7 +208,10 @@
             flex-shrink: 0; border-radius: 50%; 
             transition: transform 0.8s var(--md-sys-motion-easing-spring); 
         }
-        .progress-container.running { transform: translateY(12px) scale(1.06); }
+        .progress-container.running { transform: scale(1.06); }
+        .progress-container.running .time-display-wrapper {
+            transform: translate(-50%, calc(-50% + 12px));
+        }
         
         .progress-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
         .progress-ring .track { fill: none; stroke: var(--md-sys-color-surface-container-highest); stroke-width: 14; transition: stroke 0.4s ease; }
@@ -226,6 +228,7 @@
             display: flex; flex-direction: column; align-items: center; 
             gap: 16px; 
             pointer-events: auto; z-index: 10;
+            transition: transform 0.4s var(--md-sys-motion-easing-spring);
         }
 
         .time-display {
@@ -258,11 +261,13 @@
             border-bottom: 3px dashed var(--md-sys-color-primary);
         }
         
-        .time-label {
+                .time-label {
             font-size: 0.85rem; font-weight: 600; color: var(--md-sys-color-on-surface-variant); pointer-events: none;
             letter-spacing: 0.04em; text-transform: uppercase; background: var(--md-sys-color-surface-container-highest);
             padding: 4px 16px; border-radius: var(--md-sys-shape-corner-full); transition: background 0.4s ease;
+            text-align: center; white-space: nowrap;
         }
+
 
         .controls-card {
             background-color: var(--md-sys-color-surface-container-high); border-radius: 36px;
@@ -369,11 +374,11 @@
             display: flex; background: var(--md-sys-color-surface-container-highest); border-radius: 20px; padding: 4px; gap: 4px; 
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); position: relative; z-index: 1;
         }
-.lang-indicator {
-    position: absolute; top: 4px; bottom: 4px; left: 0; width: 33.33%; border-radius: 16px;
-    background-color: var(--md-sys-color-primary-container); box-shadow: var(--md-sys-elevation-1); z-index: 0;
-    transition: transform 0.5s var(--md-sys-motion-easing-emphasized), width 0.5s var(--md-sys-motion-easing-emphasized);
-}
+        .lang-indicator {
+            position: absolute; top: 4px; bottom: 4px; left: 0; width: 33.33%; border-radius: 16px;
+            background-color: var(--md-sys-color-primary-container); box-shadow: var(--md-sys-elevation-1); z-index: 0;
+            transition: transform 0.5s var(--md-sys-motion-easing-emphasized), width 0.5s var(--md-sys-motion-easing-emphasized);
+        }
         .lang-btn {
             flex: 1; border: none; background: transparent; padding: 6px 14px; border-radius: 16px;
             font-weight: 700; font-size: 0.85rem; color: var(--md-sys-color-on-surface-variant); cursor: pointer; 
@@ -443,13 +448,13 @@
         .line-chart-card { 
             flex-direction: column; align-items: flex-start; gap: 12px; 
             padding: 16px 20px; margin-top: 4px; margin-bottom: 12px; 
-            height: 160px; /* 默认折叠高度 */
+            height: 160px; 
             transition: height 0.5s var(--md-sys-motion-easing-spring), background-color 0.4s ease;
             position: relative; overflow: hidden; cursor: pointer;
             -webkit-user-select: none; user-select: none; touch-action: pan-y;
         }
         .line-chart-card.expanded {
-            height: 280px; /* 展开高度 */
+            height: 280px; 
             background: var(--md-sys-color-surface-container-high);
         }
         
@@ -464,10 +469,9 @@
             scroll-behavior: smooth;
         }
         .line-chart-card.expanded .chart-scroll-wrapper {
-            overflow-x: auto; /* 展开后允许横向滑动 */
+            overflow-x: auto; 
             touch-action: pan-x;
         }
-        /* 隐藏滚动条 */
         .chart-scroll-wrapper::-webkit-scrollbar { display: none; }
         
         .chart-inner {
@@ -475,8 +479,6 @@
             transition: width 0.5s var(--md-sys-motion-easing-spring);
             position: relative;
         }
-        /* 根据范围动态设置展开后的画布宽度 */
-        
 
         .line-chart-svg { width: 100%; height: 100%; overflow: visible; }
         
@@ -484,69 +486,47 @@
             fill: none; stroke: var(--md-sys-color-primary); 
             stroke-width: 3; stroke-linejoin: round; stroke-linecap: round;
         }
-        /* 区域底色 */
         .chart-area {
             fill: url(#areaGradient); pointer-events: none;
         }
 
+        @keyframes fadeInChartData { from { opacity: 0; } to { opacity: 1; } }
+
         .chart-point {
             fill: var(--md-sys-color-surface-container-lowest);
             stroke: var(--md-sys-color-primary); stroke-width: 2.5;
-            transition: r 0.3s ease, fill 0.3s ease;
+            animation: fadeInChartData 0.4s ease forwards;
         }
         .chart-point.highlight {
-            fill: var(--md-sys-color-primary); r: 5;
+            fill: var(--md-sys-color-primary);
         }
-        .line-chart-card.expanded .chart-point { r: 5; }
-        .line-chart-card.expanded .chart-point.highlight { r: 6; }
 
         .chart-text-label {
             font-size: 11px; font-weight: 700; font-family: 'Roboto Flex', 'Inter', monospace;
             fill: var(--md-sys-color-on-surface-variant); text-anchor: middle;
-            transition: opacity 0.3s ease, fill 0.3s ease;
+            animation: fadeInChartData 0.4s ease forwards;
         }
         .chart-text-label.highlight { fill: var(--md-sys-color-primary); font-weight: 800;}
-        
-        .chart-text-label.secondary { opacity: 0; pointer-events: none; }
-        .line-chart-card.expanded .chart-text-label.secondary { opacity: 1; }
 
         .chart-val-label {
             font-size: 10px; font-weight: 800; font-family: 'Roboto Flex', 'Inter', monospace;
             fill: var(--md-sys-color-primary); text-anchor: middle;
-            opacity: 0; transform: translateY(5px); transition: opacity 0.4s ease, transform 0.4s ease;
+            animation: fadeInChartData 0.5s cubic-bezier(0.2, 0, 0, 1) forwards;
         }
-        .line-chart-card.expanded .chart-val-label { opacity: 1; transform: translateY(0); }
 
-        /* 新增：坐标轴虚线与刻度字体的样式 */
         .chart-axis { stroke: var(--md-sys-color-outline-variant); stroke-width: 1.5; stroke-dasharray: 4 4; }
         .chart-y-label { font-size: 10px; font-family: 'Roboto Flex', 'Inter', monospace; fill: var(--md-sys-color-outline-variant); text-anchor: end; font-weight: 600; }
         
-        /* 新增：右上角保持展开的圆角矩形样式 */
         .keep-expanded-zone { 
-    position: absolute; 
-    top: 0; 
-    right: 0; 
-    width: 64px; 
-    height: 64px; 
-    background: var(--md-sys-color-primary-container); 
-    border-radius: 0 0 0 64px; 
-    opacity: 0; 
-    pointer-events: none; 
-    transition: opacity 0.3s ease, transform 0.3s var(--md-sys-motion-easing-spring); 
-    transform: scale(0.9); 
-    z-index: 10; 
-    box-shadow: var(--md-sys-elevation-2); 
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-end;
-    padding: 12px 10px 0 0;
-    cursor: pointer;
-}
-.keep-expanded-zone.show { 
-    opacity: 0.95; 
-    transform: scale(1); 
-    pointer-events: auto; 
-}
+            position: absolute; top: 0; right: 0; width: 64px; height: 64px; 
+            background: var(--md-sys-color-primary-container); border-radius: 0 0 0 64px; 
+            opacity: 0; pointer-events: none; 
+            transition: opacity 0.3s ease, transform 0.3s var(--md-sys-motion-easing-spring); 
+            transform: scale(0.9); z-index: 10; box-shadow: var(--md-sys-elevation-2); 
+            display: flex; align-items: flex-start; justify-content: flex-end;
+            padding: 12px 10px 0 0; cursor: pointer;
+        }
+        .keep-expanded-zone.show { opacity: 0.95; transform: scale(1); pointer-events: auto; }
 
         @media (max-width: 360px) {
             .app-container { padding: 14px 14px 20px; gap: 14px; }
@@ -634,7 +614,7 @@ if ('serviceWorker' in navigator) {
                             <stop offset="0%" stop-color="var(--md-sys-color-primary)" stop-opacity="0.9"/>
                             <stop offset="100%" stop-color="var(--md-sys-color-primary)" stop-opacity="0"/>
                         </linearGradient>
-                    </defs>
+                    </defs> 
                     <circle class="track" cx="150" cy="150" r="126"/>
                     <circle class="progress" id="progressCircle" cx="150" cy="150" r="126" stroke-dasharray="791.68" stroke-dashoffset="791.68"/>
                     <circle class="progress-tail" id="progressTail" cx="150" cy="150" r="126" stroke-dasharray="30 791.68" stroke-dashoffset="791.68"/>
@@ -744,15 +724,14 @@ if ('serviceWorker' in navigator) {
                 <span class="chart-title" id="lineChartTitle">今日专注时长</span>
                 <span class="chart-hint">点击展开</span>
                 <div class="keep-expanded-zone" id="keepExpandedZone">
-    <svg id="closeChartBtn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;pointer-events:none;">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-    </svg>
-</div>
+                    <svg id="closeChartBtn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;pointer-events:none;">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </div>
             </div>
             <div class="chart-scroll-wrapper" id="chartScrollWrapper">
-                <div class="chart-inner" id="chartInner">
-                    </div>
+                <div class="chart-inner" id="chartInner"></div>
             </div>
         </div>
 
@@ -828,8 +807,8 @@ if ('serviceWorker' in navigator) {
             const statsOverlay = document.getElementById('statsOverlay');
             const statsSheet = document.getElementById('statsSheet');
             
-            // 记录当前查看的图表范围
             let currentChartRange = 'today';
+            let isExpanded = false;
 
             const CIRCUMFERENCE = 2 * Math.PI * 126;
             const MAX_SESSIONS = 4;
@@ -840,7 +819,6 @@ if ('serviceWorker' in navigator) {
                 ja: { title: 'ポモドーロ', work: '集中', shortBreak: '小休憩', longBreak: '長休憩', settings: '設定', vibrate: 'バイブレーション', animSpeed: 'アニメーション速度', volume: '音量', language: '言語', toastWorkDone: '集中完了！少し休みましょう。', toastBreakDone: '休憩終了！集中に戻りましょう。', statsEntry: '統計データ', statsTitle: '利用記録と統計', times: '回', hours: '時間', mins: '分', today: '今日', last7Days: '今週', last30Days: '今月', chartTitleToday: '今日の集中時間', chartTitleWeek: '今週の集中時間', chartTitleMonth: '今月の集中時間', updateAvail: '更新があります', updateBtn: 'すぐ更新', days: ['月', '火', '水', '木', '金', '土', '日'], dayToday: '今日', chartHint: 'タップで展開' },
             };
 
-            // 数据结构升级：增加 sessionLog 用于记录每一次的具体专注流水
             let appData = {
                 durations: { work: 25*60, shortBreak: 5*60, longBreak: 15*60 },
                 isDarkTheme: false,
@@ -851,7 +829,7 @@ if ('serviceWorker' in navigator) {
                     longBreak: { count: 0, seconds: 0 }
                 },
                 dailyStats: {},
-                sessionLog: [] // 核心升级：[{ts: 时间戳, mode: 'work', duration: 1500}, ...]
+                sessionLog: []
             };
 
             let currentMode = 'work';
@@ -876,8 +854,6 @@ if ('serviceWorker' in navigator) {
 
             function applyLanguage(direction = null) {
                 const t = getT();
-                
-                // 根据当前模式渲染图表标题
                 let chartTitleStr = t.chartTitleToday;
                 if(currentChartRange === 'week') chartTitleStr = t.chartTitleWeek;
                 if(currentChartRange === 'month') chartTitleStr = t.chartTitleMonth;
@@ -894,7 +870,7 @@ if ('serviceWorker' in navigator) {
                     { el: document.getElementById('labelAnim'), text: t.animSpeed },
                     { el: document.getElementById('labelVolume'), text: t.volume },
                     { el: document.getElementById('labelStatsEntry'), text: t.statsEntry },
-{ el: document.querySelector('.chart-hint'), text: t.chartHint },
+                    { el: document.querySelector('.chart-hint'), text: t.chartHint },
                     { el: document.getElementById('labelStatsTitle'), text: t.statsTitle },
                     { el: document.getElementById('statWorkLabel'), text: t.work },
                     { el: document.getElementById('statShortBreakLabel'), text: t.shortBreak },
@@ -928,7 +904,7 @@ if ('serviceWorker' in navigator) {
                             item.el.classList.add(inClass);
                         });
                         updateStatsUI();
-                        renderLineChart(); // 重新渲染以更新底部的横坐标文字
+                        renderLineChart();
                         requestAnimationFrame(() => {
                             updateLangIndicator();
                             updateIndicatorPosition();
@@ -949,45 +925,40 @@ if ('serviceWorker' in navigator) {
             // ======== 核心：动态折线图渲染逻辑 ========
             function renderLineChart() {
                 const inner = document.getElementById('chartInner');
+                const scrollWrapper = document.getElementById('chartScrollWrapper');
                 const titleEl = document.getElementById('lineChartTitle');
-                if (!inner || !appData.sessionLog) return;
+                if (!inner || !scrollWrapper || !appData.sessionLog) return;
                 
                 const t = getT();
                 const now = new Date();
                 let buckets = [];
                 let labels = [];
                 let highlightIdx = -1;
-                let defaultMax = 60; // 默认最大Y轴高度（防止太平）
+                let defaultMax = 60;
 
-                // 设置图表标题
                 if(currentChartRange === 'today') titleEl.textContent = t.chartTitleToday;
                 else if(currentChartRange === 'week') titleEl.textContent = t.chartTitleWeek;
                 else if(currentChartRange === 'month') titleEl.textContent = t.chartTitleMonth;
 
-                // 1. 数据桶聚类 (Bucketing)
+                // 1. 数据桶聚类
                 if (currentChartRange === 'today') {
-                    // 今日：0点到24点 (24个格子)
                     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
                     buckets = new Array(24).fill(0);
                     for(let i=0; i<24; i++) labels.push(i.toString());
-                    
                     appData.sessionLog.forEach(log => {
                         if (log.mode === 'work' && log.ts >= startOfDay && log.ts < startOfDay + 86400000) {
                             const hr = new Date(log.ts).getHours();
-                            buckets[hr] += log.duration / 60; // 转分钟
+                            buckets[hr] += log.duration / 60;
                         }
                     });
                     highlightIdx = now.getHours();
                     defaultMax = 60; 
-
                 } else if (currentChartRange === 'week') {
-                    // 周内：周一到周日 (7个格子)
-                    const dayOfWeek = (now.getDay() + 6) % 7; // 转为 周一=0, 周日=6
+                    const dayOfWeek = (now.getDay() + 6) % 7; 
                     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
                     const startOfWeek = startOfDay - (dayOfWeek * 86400000);
                     buckets = new Array(7).fill(0);
-                    labels = t.days; // 词典里的周一到周日
-                    
+                    labels = t.days; 
                     appData.sessionLog.forEach(log => {
                         if (log.mode === 'work' && log.ts >= startOfWeek && log.ts < startOfWeek + 7*86400000) {
                             const d = (new Date(log.ts).getDay() + 6) % 7;
@@ -995,15 +966,12 @@ if ('serviceWorker' in navigator) {
                         }
                     });
                     highlightIdx = dayOfWeek;
-                    defaultMax = 120; // 周视图最高期望动态值
-
+                    defaultMax = 120; 
                 } else if (currentChartRange === 'month') {
-                    // 月内：1号到月底 (28~31个格子)
                     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
                     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
                     buckets = new Array(daysInMonth).fill(0);
                     for(let i=1; i<=daysInMonth; i++) labels.push(i.toString());
-
                     appData.sessionLog.forEach(log => {
                         if (log.mode === 'work' && log.ts >= startOfMonth && log.ts < startOfMonth + daysInMonth*86400000) {
                             const dateIdx = new Date(log.ts).getDate() - 1;
@@ -1014,131 +982,130 @@ if ('serviceWorker' in navigator) {
                     defaultMax = 180; 
                 }
 
-// 2. 动态自适应Y轴
-const dataMax = Math.max(...buckets);
-const maxY = Math.max(dataMax, defaultMax);
+                // --- 优化1 & 2：计算动态精确画布尺寸，告别条形码，保持比例 ---
+                const baseW = scrollWrapper.clientWidth || 300;
+                const vbH = isExpanded ? 240 : 120; // 展开高度 280-40=240, 折叠高度 160-40=120
+                let vbW = baseW;
+                
+                if (isExpanded) {
+                    // 展开时，确保每个数据点至少有 45px 的间距，保证宽裕的横向空间
+                    vbW = Math.max(buckets.length * 45, baseW);
+                }
+                // 动态更新容器宽度
+                inner.style.width = vbW + 'px';
 
-// 3. 绘制 SVG（使用固定 viewBox，避免展开时左侧空白）
-const len = buckets.length;
-const vbW = 1000, vbH = 300;          // viewBox 宽高
-const padLeft = 60, padRight = 40;    // 左右留白（固定像素，不受宽度影响）
-const topY = 30, bottomY = 260;       // 垂直范围
-const graphW = vbW - padLeft - padRight; // 实际绘图宽度
-const graphH = bottomY - topY;
+                // 3. 计算坐标
+                const len = buckets.length;
+                const padLeft = 45, padRight = 30;
+                const topY = 40; // --- 优化4：给顶部预留更多固定空间 ---
+                const bottomY = vbH - 25; 
+                const graphW = Math.max(100, vbW - padLeft - padRight);
+                const graphH = Math.max(40, bottomY - topY);
 
-let pathD = "", areaD = "", pointsHTML = "", labelsHTML = "";
+                const dataMax = Math.max(...buckets);
+                // --- 优化4：顶部呼吸空间，强制Y轴上限比最大数据高 25% ---
+                const maxY = Math.max(dataMax * 1.25, defaultMax);
 
-// 有数据时生成折线、区域、节点、数值标签
-if (dataMax > 0) {
-    buckets.forEach((val, i) => {
-        const x = padLeft + (i / (len - 1)) * graphW;
-        const y = bottomY - (val / maxY) * graphH;
+                let yUnit = 'm';
+                let yMaxDisplay = Math.round(maxY); 
+                if (yMaxDisplay >= 60) {
+                    yMaxDisplay = Math.round(maxY / 6) / 10;
+                    yUnit = 'h';
+                }
+                const yMidDisplay = Math.round(yMaxDisplay / 2 * 10) / 10;
 
-        if (i === 0) {
-            pathD += `M ${x} ${y} `;
-            areaD += `M ${x} ${bottomY} L ${x} ${y} `;
-        } else {
-            pathD += `L ${x} ${y} `;
-            areaD += `L ${x} ${y} `;
-        }
+                let pathD = "", areaD = "", pointsHTML = "", labelsHTML = "";
 
-        const isHigh = (i === highlightIdx);
-        pointsHTML += `<circle cx="${x}" cy="${y}" r="4" class="chart-point ${isHigh?'highlight':''}"></circle>`;
+                if (dataMax > 0) {
+                    buckets.forEach((val, i) => {
+                        const x = padLeft + (i / (len - 1)) * graphW;
+                        const y = bottomY - (val / maxY) * graphH;
 
-        if (val > 0) {
-            labelsHTML += `<text x="${x}" y="${y - 8}" class="chart-val-label">${Math.round(val)}</text>`;
-        }
-    });
-    areaD += `L ${vbW - padRight} ${bottomY} Z`;
-}
+                        if (i === 0) {
+                            pathD += `M ${x} ${y} `;
+                            areaD += `M ${x} ${bottomY} L ${x} ${y} `;
+                        } else {
+                            pathD += `L ${x} ${y} `;
+                            areaD += `L ${x} ${y} `;
+                        }
 
-// 横坐标标签（始终显示）
-buckets.forEach((val, i) => {
-    const x = padLeft + (i / (len - 1)) * graphW;
-    const isHigh = (i === highlightIdx);
-    let isPrimary = false;
-    if (currentChartRange === 'today' && (i === 0 || i === 6 || i === 12 || i === 18 || i === 23)) isPrimary = true;
-    if (currentChartRange === 'week') isPrimary = true;
-    if (currentChartRange === 'month' && (i === 0 || i === 6 || i === 13 || i === 20 || i === 27 || i === len-1)) isPrimary = true;
+                        // --- 优化1：折叠状态下做减法，隐藏圆点和具体数值 ---
+                        if (isExpanded) {
+                            const isHigh = (i === highlightIdx);
+                            pointsHTML += `<circle cx="${x}" cy="${y}" r="4.5" class="chart-point ${isHigh?'highlight':''}"></circle>`;
+                            if (val > 0) {
+                                labelsHTML += `<text x="${x}" y="${y - 12}" class="chart-val-label">${Math.round(val)}</text>`;
+                            }
+                        }
+                    });
+                    areaD += `L ${vbW - padRight} ${bottomY} Z`;
+                }
 
-    labelsHTML += `<text x="${x}" y="${bottomY + 24}" class="chart-text-label ${isPrimary?'primary':'secondary'} ${isHigh?'highlight':''}">${labels[i]}</text>`;
-});
+                // 横坐标标签
+                buckets.forEach((val, i) => {
+                    const x = padLeft + (i / (len - 1)) * graphW;
+                    const isHigh = (i === highlightIdx);
+                    let isPrimary = false;
+                    if (currentChartRange === 'today' && (i === 0 || i === 6 || i === 12 || i === 18 || i === 23)) isPrimary = true;
+                    if (currentChartRange === 'week') isPrimary = true;
+                    if (currentChartRange === 'month' && (i === 0 || i === 6 || i === 13 || i === 20 || i === 27 || i === len-1)) isPrimary = true;
 
-// 坐标轴与刻度
-const axisHTML = `
-    <line x1="${padLeft}" y1="${bottomY}" x2="${vbW - padRight}" y2="${bottomY}" class="chart-axis" />
-    <text x="${padLeft - 8}" y="${bottomY + 5}" class="chart-y-label">0</text>
-    <line x1="${padLeft}" y1="${topY + graphH/2}" x2="${vbW - padRight}" y2="${topY + graphH/2}" class="chart-axis" opacity="0.3" />
-    <text x="${padLeft - 8}" y="${topY + graphH/2 + 5}" class="chart-y-label">${Math.round(maxY / 2)}${currentChartRange === 'today' ? 'm' : 'h'}</text>
-    <line x1="${padLeft}" y1="${topY}" x2="${vbW - padRight}" y2="${topY}" class="chart-axis" opacity="0.3" />
-    <text x="${padLeft - 8}" y="${topY + 5}" class="chart-y-label">${Math.round(maxY)}${currentChartRange === 'today' ? 'm' : 'h'}</text>
-`;
+                    // --- 优化1：折叠状态下，彻底抛弃非关键节点的横坐标渲染 ---
+                    if (!isExpanded && !isPrimary) return;
 
-inner.innerHTML = `
-    <svg class="line-chart-svg" viewBox="0 0 ${vbW} ${vbH}" preserveAspectRatio="xMinYMid meet">
-        <defs>
-            <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="var(--md-sys-color-primary-container)" stop-opacity="0.8"/>
-                <stop offset="100%" stop-color="var(--md-sys-color-primary-container)" stop-opacity="0.0"/>
-            </linearGradient>
-        </defs>
-        ${axisHTML}
-        ${dataMax > 0 ? `<path d="${areaD}" class="chart-area" />
-        <path d="${pathD}" class="chart-line" />
-        ${pointsHTML}` : ''}
-        ${labelsHTML}
-    </svg>
-`;
+                    labelsHTML += `<text x="${x}" y="${bottomY + 18}" class="chart-text-label ${isPrimary?'primary':'secondary'} ${isHigh?'highlight':''}">${labels[i]}</text>`;
+                });
+
+                const axisHTML = `
+                    <line x1="${padLeft}" y1="${bottomY}" x2="${vbW - padRight}" y2="${bottomY}" class="chart-axis" />
+                    <text x="${padLeft - 8}" y="${bottomY + 4}" class="chart-y-label">0</text>
+                    <line x1="${padLeft}" y1="${topY + graphH/2}" x2="${vbW - padRight}" y2="${topY + graphH/2}" class="chart-axis" opacity="0.3" />
+                    <text x="${padLeft - 8}" y="${topY + graphH/2 + 4}" class="chart-y-label">${yMidDisplay}${yUnit}</text>
+                    <line x1="${padLeft}" y1="${topY}" x2="${vbW - padRight}" y2="${topY}" class="chart-axis" opacity="0.3" />
+                    <text x="${padLeft - 8}" y="${topY + 4}" class="chart-y-label">${yMaxDisplay}${yUnit}</text>
+                `;
+
+                // preserveAspectRatio="none" 配合外层 CSS 宽高过渡，实现“平滑展开/折叠”动效，且不破坏展开后的 1:1 绝对比例
+                inner.innerHTML = `
+                    <svg class="line-chart-svg" viewBox="0 0 ${vbW} ${vbH}" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="var(--md-sys-color-primary-container)" stop-opacity="0.8"/>
+                                <stop offset="100%" stop-color="var(--md-sys-color-primary-container)" stop-opacity="0.0"/>
+                            </linearGradient>
+                        </defs>
+                        ${axisHTML}
+                        ${dataMax > 0 ? `<path d="${areaD}" class="chart-area" />
+                        <path d="${pathD}" class="chart-line" />
+                        ${pointsHTML}` : ''}
+                        ${labelsHTML}
+                    </svg>
+                `;
             }
 
-            // ======== 渐进式展开与手势逻辑 ========
             const chartCard = document.getElementById('lineChartCard');
             const scrollWrapper = document.getElementById('chartScrollWrapper');
             const keepExpandedZone = document.getElementById('keepExpandedZone');
-            let isExpanded = false;
 
             function collapseChart() {
-    if(!isExpanded) return;
-    isExpanded = false;
-    chartCard.classList.remove('expanded');
-    keepExpandedZone.classList.remove('show');
-    // 折叠后恢复宽度为100%
-    const inner = document.getElementById('chartInner');
-    if (inner) inner.style.width = '100%';
-    vibrateTap();
-}
+                if(!isExpanded) return;
+                isExpanded = false;
+                chartCard.classList.remove('expanded');
+                keepExpandedZone.classList.remove('show');
+                vibrateTap();
+                // 触发重绘，依赖 preserveAspectRatio="none" 缩回
+                requestAnimationFrame(() => renderLineChart());
+            }
 
             function expandChart() {
-    if(isExpanded) return;
-    vibrateTap();
-    isExpanded = true;
-    chartCard.classList.add('expanded');
-    keepExpandedZone.classList.add('show');
-    const inner = document.getElementById('chartInner');
-    if (inner && scrollWrapper) {
-        let pointCount;
-        if (currentChartRange === 'today') pointCount = 24;
-        else if (currentChartRange === 'week') pointCount = 7;
-        else {
-            const now = new Date();
-            pointCount = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-        }
-        // 宽度至少和容器一样大，保证周视图不会缩小，今日/月内可按需加宽
-        const containerWidth = scrollWrapper.clientWidth;
-        inner.style.width = Math.max(pointCount * 40, containerWidth) + 'px';
-    }
-}
-            
-
-
-
-            
-
-            
-
-            
-
-
+                if(isExpanded) return;
+                vibrateTap();
+                isExpanded = true;
+                chartCard.classList.add('expanded');
+                keepExpandedZone.classList.add('show');
+                // 触发重绘以获取宽敞的内部画板
+                requestAnimationFrame(() => renderLineChart());
+            }
 
             function updateStatsUI() {
                 const t = getT();
@@ -1170,7 +1137,7 @@ inner.innerHTML = `
                         if (parsed.settings) appData.settings = { ...appData.settings, ...parsed.settings };
                         if (parsed.durations) appData.durations = { ...appData.durations, ...parsed.durations };
                         if (parsed.history) appData.history = { ...appData.history, ...parsed.history };
-                        if (parsed.dailyStats) appData.dailyStats = parsed.dailyStats; // 遗留数据向下兼容
+                        if (parsed.dailyStats) appData.dailyStats = parsed.dailyStats;
                         if (parsed.sessionLog) appData.sessionLog = parsed.sessionLog;
                     } catch(e) { console.error("读取存档失败", e); }
                 }
@@ -1246,8 +1213,9 @@ inner.innerHTML = `
                 if (timeDisplay.style.display !== 'none') { timeDisplay.textContent = formattedTime; }
                 document.title = `${formattedTime} · ${getT()[currentMode]} - ${getT().title}`;
 
-                const progress = 1 - (remainingSeconds/totalSeconds);
-                const offset = (1-progress)*CIRCUMFERENCE;
+                                const progress = remainingSeconds / totalSeconds;
+                const offset = (1 - progress) * CIRCUMFERENCE;
+
                 progressCircle.style.strokeDashoffset = offset;
                 
                 const delta = Math.abs(prevRemaining - remainingSeconds);
@@ -1378,7 +1346,6 @@ inner.innerHTML = `
                     appData.history[currentMode].count += 1;
                     appData.history[currentMode].seconds += totalSeconds;
                     
-                    // 新系统：打入底层数据流
                     if(!appData.sessionLog) appData.sessionLog = [];
                     appData.sessionLog.push({
                         ts: Date.now(),
@@ -1386,14 +1353,13 @@ inner.innerHTML = `
                         duration: totalSeconds
                     });
                     
-                    // 自动清理超过 60 天的数据，避免存储过大
                     const sixtyDaysAgo = Date.now() - 60 * 24 * 3600 * 1000;
                     appData.sessionLog = appData.sessionLog.filter(log => log.ts > sixtyDaysAgo);
                     
                     saveData();
                     updateStatsUI(); 
                     if(document.getElementById('statsSheet').classList.contains('active')) {
-                        renderLineChart(); // 若面板开着，实时更新折线图
+                        renderLineChart(); 
                     }
                 }
                 
@@ -1570,25 +1536,9 @@ inner.innerHTML = `
                     updateStatsTimeIndicator();
                     vibrateTap();
 
-              // 更新全局状态并控制卡片的宽度类
-currentChartRange = e.target.dataset.range;
-chartCard.className = `stat-card line-chart-card range-${currentChartRange} ${isExpanded ? 'expanded' : ''}`;
-if (isExpanded) {
-    const innerChartEl = document.getElementById('chartInner');
-    if (innerChartEl && scrollWrapper) {
-        let ptCount;
-        if (currentChartRange === 'today') ptCount = 24;
-        else if (currentChartRange === 'week') ptCount = 7;
-        else {
-            const now = new Date();
-            ptCount = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-        }
-        innerChartEl.style.width = Math.max(ptCount * 40, scrollWrapper.clientWidth) + 'px';
-    }
-}
+                    currentChartRange = e.target.dataset.range;
+                    chartCard.className = `stat-card line-chart-card range-${currentChartRange} ${isExpanded ? 'expanded' : ''}`;
                     
-                    
-                    // 动画处理：平滑滑出再滑入
                     const innerChart = document.getElementById('chartInner');
                     const titleEl = document.getElementById('lineChartTitle');
                     const outClass = direction === 'left' ? 'slide-out-left' : 'slide-out-right';
@@ -1598,7 +1548,7 @@ if (isExpanded) {
                     titleEl.classList.add(outClass);
                     
                     setTimeout(() => {
-                        renderLineChart(); // 重绘新周期的图表
+                        renderLineChart();
                         
                         innerChart.classList.remove(outClass);
                         innerChart.classList.add(inClass);
@@ -1612,18 +1562,65 @@ if (isExpanded) {
                     }, 200);
                 });
             });
-// 点击图表卡片本身 展开
-chartCard.addEventListener('click', (e) => {
-    if (!isExpanded) {
-        expandChart();
-    }
-});
 
-// 点击右上角 X 图标 折叠（阻止冒泡，防止触发上面卡片点击）
-keepExpandedZone.addEventListener('click', (e) => {
-    e.stopPropagation();
-    collapseChart();
-});
+            chartCard.addEventListener('click', (e) => {
+                if (!isExpanded) {
+                    expandChart();
+                }
+            });
+
+            keepExpandedZone.addEventListener('click', (e) => {
+                e.stopPropagation();
+                collapseChart();
+            });
+
+                                    // ---- 下拉关闭手势 (统一规则) ----
+            function addSwipeToClose(sheet, overlay, onClosed) {
+                let startY = 0;
+                let moved = false;
+                sheet.addEventListener('touchstart', (e) => {
+                    // 统一的最高级别防误触：无论哪个面板，都必须且只能按住顶部小横条或标题区域才能下拉关闭。
+                    // 这样彻底释放了面板内部的上下左右滑动自由（图表、列表、滑块全部免疫误触）。
+                    if (!e.target.closest('.sheet-handle, .sheet-title')) {
+                        startY = -1; 
+                        return;
+                    }
+                    startY = e.touches[0].clientY;
+                    moved = false;
+                }, { passive: true });
+
+
+                
+                sheet.addEventListener('touchmove', (e) => {
+                    if (startY === -1) return;
+                    const deltaY = e.touches[0].clientY - startY;
+                    if (deltaY > 0) {
+                        moved = true;
+                        e.preventDefault();
+                        sheet.style.transform = `translate(-50%, ${deltaY}px)`;
+                    }
+                }, { passive: false });
+                
+                sheet.addEventListener('touchend', (e) => {
+                    if (startY === -1 || !moved) return;
+                    const deltaY = e.changedTouches[0].clientY - startY;
+                    if (deltaY > 80) {
+                        sheet.style.transform = '';
+                        overlay.classList.remove('active');
+                        sheet.classList.remove('active');
+                        if (onClosed) onClosed();
+                    } else {
+                        sheet.style.transform = '';
+                    }
+                    startY = 0;
+                });
+            }
+
+            addSwipeToClose(bottomSheet, settingsOverlay, () => {});
+            addSwipeToClose(statsSheet, statsOverlay, () => {
+                if (isExpanded) collapseChart();
+            });
+
             statsEntryBtn.addEventListener('click',()=>{ 
                 statsOverlay.classList.add('active'); 
                 statsSheet.classList.add('active'); 
@@ -1634,7 +1631,6 @@ keepExpandedZone.addEventListener('click', (e) => {
             statsOverlay.addEventListener('click',()=>{ 
                 statsOverlay.classList.remove('active'); 
                 statsSheet.classList.remove('active');
-                // 面板关闭时，将折线图状态还原回折叠状态
                 if(isExpanded) collapseChart();
             });
 
