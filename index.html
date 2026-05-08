@@ -11,6 +11,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&family=Nunito:wght@400;500;600;700&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&family=Zen+Old+Mincho:wght@600&display=swap" rel="stylesheet">
 
+    <!-- Material Web 组件引入 -->
+    <script type="importmap">
+        {
+            "imports": {
+                "@material/web/": "https://esm.run/@material/web/"
+            }
+        }
+    </script>
+    <script type="module">
+        import '@material/web/slider/slider.js';
+    </script>
+
     <style>
                 :root {
             /* ====== 主色调系列（核心视觉强调色） ====== */
@@ -417,20 +429,13 @@
         .lang-btn.active { color: var(--md-sys-color-on-primary-container); }
         .lang-btn:active { transform: scale(0.9); }
 
-        input[type="range"] {
-            -webkit-appearance: none; appearance: none; width: 140px; height: 16px; border-radius: 16px; outline: none; cursor: pointer;
-            background: linear-gradient(to right, var(--md-sys-color-primary) var(--slider-fill, 50%), var(--md-sys-color-surface-container-highest) var(--slider-fill, 50%));
-            transition: transform 0.3s var(--md-sys-motion-easing-spring);
+        /* Material Slider 样式微调 */
+        md-slider {
+            width: 140px;
+            --md-slider-track-height: 16px;
+            --md-slider-handle-width: 24px;
+            --md-slider-handle-height: 24px;
         }
-        input[type="range"]:active { transform: scale(1.02); }
-        input[type="range"]::-webkit-slider-runnable-track { height: 16px; border-radius: 16px; background: transparent; }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 12px; 
-            background: var(--md-sys-color-surface-container-lowest); border: 5px solid var(--md-sys-color-primary); 
-            margin-top: -4px; box-shadow: var(--md-sys-elevation-1);
-            transition: transform 0.4s var(--md-sys-motion-easing-spring), border-width 0.3s var(--md-sys-motion-easing-spring);
-        }
-        input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.2); border-width: 8px; }
 
         /* ======== 全局文本滑动动效 ======== */
         .slide-out-left { animation: slideOutL 0.25s cubic-bezier(0.2, 0, 0, 1) forwards; display: inline-block; }
@@ -493,6 +498,12 @@
         }
     </style>
 </head>
+// 监听来自 Service Worker 的更新通知（用于自动检测 index.html 变化）
+navigator.serviceWorker.addEventListener('message', event => {
+    if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
+        document.getElementById('updateSnackbar').classList.add('show');
+    }
+});
 <script>
         // 注册 Service Worker 并监听无缝静默更新
         let newWorker;
@@ -502,7 +513,6 @@
                     registration.addEventListener('updatefound', () => {
                         newWorker = registration.installing;
                         newWorker.addEventListener('statechange', () => {
-                            // 当新版本已安装且当前有旧版本在控制页面时，触发视觉层弹窗
                             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                                 document.getElementById('updateSnackbar').classList.add('show');
                             }
@@ -510,7 +520,6 @@
                     });
                 }).catch(err => console.log('SW 注册失败:', err));
 
-                // 监听 Controller 变更以实现无缝重载
                 let refreshing = false;
                 navigator.serviceWorker.addEventListener('controllerchange', () => {
                     if (refreshing) return;
@@ -646,21 +655,22 @@
                     <svg class="setting-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path></svg>
                     <span class="setting-label" id="labelVibrate">振动强度</span>
                 </div>
-                <input type="range" id="vibrateSlider" min="0" max="100" value="80">
+                <!-- 替换为 md-slider -->
+                <md-slider id="vibrateSlider" min="0" max="100" value="80" aria-label="振动强度"></md-slider>
             </div>
             <div class="setting-row">
                 <div class="setting-label-wrap">
                     <svg class="setting-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
                     <span class="setting-label" id="labelAnim">动画速度</span>
                 </div>
-                <input type="range" id="animSlider" min="0" max="100" value="70">
+                <md-slider id="animSlider" min="0" max="100" value="70" aria-label="动画速度"></md-slider>
             </div>
             <div class="setting-row">
                 <div class="setting-label-wrap">
                     <svg class="setting-icon" id="iconVolume" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path class="vol-wave vol-low" d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path class="vol-wave vol-high" d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
                     <span class="setting-label" id="labelVolume">提示音音量</span>
                 </div>
-                <input type="range" id="volumeSlider" min="0" max="100" value="75">
+                <md-slider id="volumeSlider" min="0" max="100" value="75" aria-label="提示音音量"></md-slider>
             </div>
         </div>
     </div>
@@ -730,6 +740,7 @@
             const bottomSheet = document.getElementById('bottomSheet');
             
             const langBtns = document.querySelectorAll('.lang-btn');
+            // 现在使用 md-slider，直接通过 id 获取
             const vibrateSlider = document.getElementById('vibrateSlider');
             const animSlider = document.getElementById('animSlider');
             const volumeSlider = document.getElementById('volumeSlider');
@@ -825,7 +836,6 @@
                 item.el.classList.add(inClass);
             });
             updateStatsUI();
-            // 文本更新后再调整指示器位置
             requestAnimationFrame(() => {
                 updateLangIndicator();
                 updateIndicatorPosition();
@@ -835,7 +845,6 @@
     } else {
         textElements.forEach(item => item.el.textContent = item.text);
         updateStatsUI();
-        // 非动画切换时也更新指示器
         requestAnimationFrame(() => {
             updateLangIndicator();
             updateIndicatorPosition();
@@ -869,28 +878,28 @@
                 if (saved) {
                     try { 
                         const parsed = JSON.parse(saved);
-// 只扩展顶层非对象字段，子对象单独安全合并
-if (parsed.isDarkTheme !== undefined) appData.isDarkTheme = parsed.isDarkTheme;
-if (parsed.settings) {
-    appData.settings = { ...appData.settings, ...parsed.settings };
-}
-if (parsed.durations) {
-    appData.durations = { ...appData.durations, ...parsed.durations };
-}
-if (parsed.history) {
-    appData.history = { ...appData.history, ...parsed.history };
-}
+                        if (parsed.isDarkTheme !== undefined) appData.isDarkTheme = parsed.isDarkTheme;
+                        if (parsed.settings) {
+                            appData.settings = { ...appData.settings, ...parsed.settings };
+                        }
+                        if (parsed.durations) {
+                            appData.durations = { ...appData.durations, ...parsed.durations };
+                        }
+                        if (parsed.history) {
+                            appData.history = { ...appData.history, ...parsed.history };
+                        }
                     } catch(e) { console.error("读取存档失败", e); }
                 }
                 
                 document.body.classList.toggle('dark', appData.isDarkTheme);
-                vibrateSlider.value = appData.settings.vibrate;
-                animSlider.value = appData.settings.anim;
-                volumeSlider.value = appData.settings.volume;
-updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
+                                // 同步 md-slider 的值（等组件就绪再设值）
+                requestAnimationFrame(() => {
+                    vibrateSlider.value = appData.settings.vibrate;
+                    animSlider.value = appData.settings.anim;
+                    volumeSlider.value = appData.settings.volume;
+                    updateVolumeIcon(appData.settings.volume);
+                });
 
-[vibrateSlider, animSlider, volumeSlider].forEach(updateSliderFill);
-                
                 applyAnimSpeed();
                 applyLanguage();
                 switchMode('work');
@@ -899,13 +908,6 @@ updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
             }
 
             function saveData() { localStorage.setItem('pomodoroAppData', JSON.stringify(appData)); }
-
-            function updateSliderFill(slider) {
-                const min = slider.min || 0;
-                const max = slider.max || 100;
-                const percent = ((slider.value - min) / (max - min)) * 100;
-                slider.style.setProperty('--slider-fill', `${percent}%`);
-            }
 
             function getAudioContext() { if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
             document.body.addEventListener('pointerdown', function unlockAudio() { const ctx = getAudioContext(); if(ctx.state === 'suspended') ctx.resume(); const buffer = ctx.createBuffer(1, 1, 22050); const source = ctx.createBufferSource(); source.buffer = buffer; source.connect(ctx.destination); source.start(0); document.body.removeEventListener('pointerdown', unlockAudio); }, { once: true });
@@ -924,16 +926,15 @@ updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
             }
 
             function playTickSound() { playTone(600, 0.015, 'triangle'); vibrate([8]); }
-                        function playStartSound() { const dur = 0.2; playTone(880.00, dur); setTimeout(() => playTone(1108.73, dur), 100); }
+            function playStartSound() { const dur = 0.2; playTone(880.00, dur); setTimeout(() => playTone(1108.73, dur), 100); }
             function playPauseSound() { const dur = 0.2; playTone(1108.73, dur); setTimeout(() => playTone(880.00, dur), 100); }
             function playCompletionSound() {
-
-    const d = 153;
-    playTone(523.25, 40/d);
-    setTimeout(() => playTone(659.25, 20/d), 40/d * 1000);
-    setTimeout(() => playTone(783.99, 40/d), (40+20)/d * 1000);
-    setTimeout(() => playTone(1046.50, 20/d), (40+20+40)/d * 1000);
-}
+                const d = 153;
+                playTone(523.25, 40/d);
+                setTimeout(() => playTone(659.25, 20/d), 40/d * 1000);
+                setTimeout(() => playTone(783.99, 40/d), (40+20)/d * 1000);
+                setTimeout(() => playTone(1046.50, 20/d), (40+20+40)/d * 1000);
+            }
             function playResetSound() { const dur = 0.2; playTone(1318.51, dur); playTone(698.46, dur); setTimeout(() => { playTone(1174.66, dur); playTone(698.46, dur); }, 100); setTimeout(() => { playTone(1567.98, dur); playTone(698.46, dur); }, 200); }
             
             function vibrate(p) { 
@@ -960,7 +961,6 @@ updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
 
             function updateDisplay() {
                 const formattedTime = formatTime(remainingSeconds);
-                // 更新时如果是输入框形态，则不覆盖它
                 if (timeDisplay.style.display !== 'none') {
                     timeDisplay.textContent = formattedTime;
                 }
@@ -987,14 +987,9 @@ updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
                 } else lastSecondVibrate = -1;
             }
 
-            // 更新控件容器及按钮状态的核心逻辑
             function updateFabState() { 
                 const isPristine = (remainingSeconds === totalSeconds && !isRunning);
-                
-                // 控制待机/运行按钮的平滑过渡
                 controlsCard.classList.toggle('pristine', isPristine);
-                
-                // 控制数字是否出现编辑虚线
                 timeDisplay.classList.toggle('editable', isPristine);
 
                 if(isRunning) { 
@@ -1094,15 +1089,15 @@ updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
                 progressContainer.classList.add('completed-anim'); setTimeout(()=>progressContainer.classList.remove('completed-anim'),1500);
                 
                 playCompletionSound();
-if (!isSkip) {
-    vibrateComplete();
-    if (Notification.permission === 'granted') {
-        const t = getT();
-        const title = t.title;
-        const body = currentMode === 'work' ? t.toastWorkDone : t.toastBreakDone;
-        new Notification(title, { body, icon: './icon.png', silent: true });
-    }
-    if(!appData.history) {
+                if (!isSkip) {
+                    vibrateComplete();
+                    if (Notification.permission === 'granted') {
+                        const t = getT();
+                        const title = t.title;
+                        const body = currentMode === 'work' ? t.toastWorkDone : t.toastBreakDone;
+                        new Notification(title, { body, icon: './icon.png', silent: true });
+                    }
+                    if(!appData.history) {
                         appData.history = { work: {count:0,seconds:0}, shortBreak: {count:0,seconds:0}, longBreak: {count:0,seconds:0} };
                     }
                     appData.history[currentMode].count += 1;
@@ -1124,12 +1119,12 @@ if (!isSkip) {
             }
 
             function switchMode(mode) { 
-    if(isRunning) return; 
-    currentMode = mode; 
-    if (mode === 'work') { cycleCount = 0; }
-    totalSeconds = appData.durations[mode]; 
-    remainingSeconds = totalSeconds; elapsedBeforePause = 0; clearTimer(); updateDisplay(); refreshUI(); 
-}
+                if(isRunning) return; 
+                currentMode = mode; 
+                if (mode === 'work') { cycleCount = 0; }
+                totalSeconds = appData.durations[mode]; 
+                remainingSeconds = totalSeconds; elapsedBeforePause = 0; clearTimer(); updateDisplay(); refreshUI(); 
+            }
             
             function skipCurrent() { 
                 if(isRunning) pauseTimer(); 
@@ -1138,15 +1133,14 @@ if (!isSkip) {
                 updateDisplay(); completeTimer(true); 
             }
             
-            // 按钮专属的时间加减（分钟为单位）
             function adjustDuration(deltaSecs) { 
-        if(isRunning) return; 
-        autoStartNext = false;
-        const isPristine = (remainingSeconds === totalSeconds && !isRunning);
-        if(!isPristine) return;
+                if(isRunning) return; 
+                autoStartNext = false;
+                const isPristine = (remainingSeconds === totalSeconds && !isRunning);
+                if(!isPristine) return;
                 
                 let newSecs = appData.durations[currentMode] + deltaSecs; 
-                newSecs = Math.max(1, Math.min(120 * 60, newSecs)); // 最小1秒，最大120分钟
+                newSecs = Math.max(1, Math.min(120 * 60, newSecs));
                 
                 if (appData.durations[currentMode] !== newSecs) { playTickSound(); }
 
@@ -1186,14 +1180,13 @@ if (!isSkip) {
                     if(val > 0) playTone(400 + val*4, 0.05); 
                 }
                 
-                updateSliderFill(e.target);
                 saveData();
             }
 
-            // 内联编辑核心逻辑：输入解析器（支持例如 "2500" -> 25m00s, "90" -> 01m30s）
+            // 内联编辑核心逻辑
             function parseTimeString(str) {
-                str = str.replace(/\D/g, ''); // 仅保留数字
-                if(!str) return -1; // 标识清空状态
+                str = str.replace(/\D/g, '');
+                if(!str) return -1;
                 let val = parseInt(str, 10);
                 if(val === 0) return 0;
                 
@@ -1213,7 +1206,7 @@ if (!isSkip) {
                 }
                 
                 if(min > 120) {
-                    min = 120; sec = 0; // 封顶 120 分钟
+                    min = 120; sec = 0;
                 }
                 
                 return min * 60 + sec;
@@ -1228,10 +1221,9 @@ if (!isSkip) {
                 const currentSecs = appData.durations[currentMode];
                 
                 const input = document.createElement('input');
-                input.type = 'tel'; // 调出手机端最友好的数字拨号键盘
+                input.type = 'tel';
                 input.id = 'timeInput';
                 
-                // 初始化为纯数字，例如 25分00秒 -> "2500"
                 let m = Math.floor(currentSecs / 60);
                 let s = Math.floor(currentSecs % 60);
                 input.value = String(m).padStart(2, '0') + String(s).padStart(2, '0');
@@ -1243,12 +1235,12 @@ if (!isSkip) {
                 
                 input.focus(); 
                 let len = input.value.length;
-                input.setSelectionRange(len, len); // 光标置于末尾
+                input.setSelectionRange(len, len);
 
                 const finishEdit = () => {
                     let parsedSecs = parseTimeString(input.value);
-                    if (parsedSecs === -1) parsedSecs = currentSecs; // 如果用户删光了不改，直接恢复
-                    if (parsedSecs < 1) parsedSecs = 60; // 最小限制为 1 分钟（60秒）
+                    if (parsedSecs === -1) parsedSecs = currentSecs;
+                    if (parsedSecs < 1) parsedSecs = 60;
 
                     if (parsedSecs !== currentSecs) {
                         appData.durations[currentMode] = parsedSecs;
@@ -1282,9 +1274,12 @@ if (!isSkip) {
                 });
             });
 
+            // 为 md-slider 添加事件监听
             [vibrateSlider, animSlider, volumeSlider].forEach(slider => {
                 slider.addEventListener('input', handleSettingsChange);
-                slider.addEventListener('change', () => { if(slider.id === 'vibrateSlider') vibrateTest(); });
+                slider.addEventListener('change', () => { 
+                    if(slider.id === 'vibrateSlider') vibrateTest(); 
+                });
             });
 
             function createRipple(e) {
@@ -1308,7 +1303,6 @@ if (!isSkip) {
             statsEntryBtn.addEventListener('click',()=>{ statsOverlay.classList.add('active'); statsSheet.classList.add('active'); updateStatsUI(); });
             statsOverlay.addEventListener('click',()=>{ statsOverlay.classList.remove('active'); statsSheet.classList.remove('active'); });
 
-            // 更新触控动效与 PWA 更新指令派发
             const updateBtn = document.getElementById('updateBtn');
             if(updateBtn) {
                 updateBtn.addEventListener('click', () => {
@@ -1320,26 +1314,26 @@ if (!isSkip) {
             }
 
             fabPlay.addEventListener('click',()=>{ 
-    if (Notification.permission === 'default') {
-        Notification.requestPermission();
-    }
-    if(isRunning){ pauseTimer(); vibrateCancel(); } else startTimer(); 
-});
+                if (Notification.permission === 'default') {
+                    Notification.requestPermission();
+                }
+                if(isRunning){ pauseTimer(); vibrateCancel(); } else startTimer(); 
+            });
             resetBtn.addEventListener('click',()=>{ resetTimer(); vibrateReset(); });
             skipBtn.addEventListener('click',()=>{ skipCurrent(); vibrateSkip(); });
             
             modeCards.forEach(card=>{ 
-    card.addEventListener('click',()=>{ 
-        if(isRunning) return; 
-        const mode=card.dataset.mode; 
-        if(mode && mode !== currentMode){ 
-            autoStartNext = false; // 手动切换时禁止自动开始
-            vibrateTap(); switchMode(mode); 
-        } 
-    }); 
-});
+                card.addEventListener('click',()=>{ 
+                    if(isRunning) return; 
+                    const mode=card.dataset.mode; 
+                    if(mode && mode !== currentMode){ 
+                        autoStartNext = false;
+                        vibrateTap(); switchMode(mode); 
+                    } 
+                }); 
+            });
             
-            adjustMinusBtn.addEventListener('click',()=>{ adjustDuration(-60); }); // 按钮调时间默认步进60秒
+            adjustMinusBtn.addEventListener('click',()=>{ adjustDuration(-60); });
             adjustPlusBtn.addEventListener('click',()=>{ adjustDuration(60); });
             
             let longPressTimeout = null; let longPressInterval = null;
