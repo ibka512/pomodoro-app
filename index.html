@@ -1128,12 +1128,17 @@ navigator.serviceWorker.addEventListener('message', event => {
             }
             
             function skipCurrent() { 
-                if(isRunning) pauseTimer(); 
-                autoStartNext = false;
-                remainingSeconds = 0; totalSeconds = appData.durations[currentMode]; elapsedBeforePause = totalSeconds; 
-                updateDisplay(); completeTimer(true); 
-            }
-            
+    if(isRunning) {
+        // 直接停止计时，不放暂停音效
+        isRunning = false;
+        clearTimer();
+        releaseWakeLock();
+        startTimestamp = null;
+    }
+    autoStartNext = false;
+    remainingSeconds = 0; totalSeconds = appData.durations[currentMode]; elapsedBeforePause = totalSeconds; 
+    updateDisplay(); completeTimer(true); 
+}
             function adjustDuration(deltaSecs) { 
                 if(isRunning) return; 
                 autoStartNext = false;
