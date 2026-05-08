@@ -924,8 +924,10 @@ updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
             }
 
             function playTickSound() { playTone(600, 0.015, 'triangle'); vibrate([8]); }
-            function playStartSound() { const dur = 0.2; playTone(880.00, dur); setTimeout(() => playTone(1108.73, dur), 100); }
+                        function playStartSound() { const dur = 0.2; playTone(880.00, dur); setTimeout(() => playTone(1108.73, dur), 100); }
+            function playPauseSound() { const dur = 0.2; playTone(1108.73, dur); setTimeout(() => playTone(880.00, dur), 100); }
             function playCompletionSound() {
+
     const d = 153;
     playTone(523.25, 40/d);
     setTimeout(() => playTone(659.25, 20/d), 40/d * 1000);
@@ -1066,6 +1068,7 @@ updateVolumeIcon(appData.settings.volume); // 修复4：同步音量图标
                 startTimestamp = null; 
                 clearTimer(); 
                 releaseWakeLock(); 
+                playPauseSound(); 
                 updateDisplay(); refreshUI(); 
             }
 
