@@ -498,13 +498,14 @@
         }
     </style>
 </head>
+
+<script>
 // 监听来自 Service Worker 的更新通知（用于自动检测 index.html 变化）
 navigator.serviceWorker.addEventListener('message', event => {
     if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
         document.getElementById('updateSnackbar').classList.add('show');
     }
 });
-<script>
         // 注册 Service Worker 并监听无缝静默更新
         let newWorker;
         if ('serviceWorker' in navigator) {
