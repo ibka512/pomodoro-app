@@ -197,11 +197,12 @@
         .mode-icon { width: 28px; height: 28px; fill: currentColor; opacity: 0.9; transition: opacity 0.4s ease; }
         .mode-card.active .mode-icon { opacity: 1; }
 
-        .timer-card {
+                .timer-card {
             flex: 1; background-color: var(--md-sys-color-surface-container-low); border-radius: var(--md-sys-shape-corner-extra-large); 
             box-shadow: var(--md-sys-elevation-2); display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 24px 16px; gap: 16px; min-height: 0; position: relative; transition: background-color 0.4s ease; overflow: hidden;
+            padding: 24px 16px; gap: 16px; min-height: 0; position: relative; transition: background-color 0.4s ease;
         }
+
 
         .progress-container { 
             position: relative; width: min(68vw, 260px); height: min(68vw, 260px); 
@@ -215,11 +216,24 @@
         
         .progress-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
         .progress-ring .track { fill: none; stroke: var(--md-sys-color-surface-container-highest); stroke-width: 14; transition: stroke 0.4s ease; }
-        .progress-ring .progress {
+                .progress-ring .progress {
             fill: none; stroke: var(--md-sys-color-primary); stroke-width: 14; stroke-linecap: round;
-            transition: stroke-dashoffset var(--anim-speed) linear, stroke 0.5s ease;
+            /* 待机/重置状态：保持丝滑的惯性回弹 */
+            transition: stroke-dashoffset var(--anim-speed) var(--md-sys-motion-easing-spring), stroke 0.5s ease;
         }
-        .progress-ring .progress-tail { fill: none; stroke: url(#tailGradient); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset var(--anim-speed) linear;}
+        .progress-ring .progress-tail { 
+            fill: none; stroke: url(#tailGradient); stroke-width: 14; stroke-linecap: round; 
+            transition: stroke-dashoffset var(--anim-speed) var(--md-sys-motion-easing-spring);
+        }
+
+        /* 核心修复：跑秒状态下，剥夺 CSS 惯性，移交控制权给实时时钟，做到毫秒级同步 */
+        .progress-container.running .progress-ring .progress {
+            transition: stroke 0.5s ease; 
+        }
+        .progress-container.running .progress-ring .progress-tail {
+            transition: none; 
+        }
+
         .progress-ring .progress.warning { stroke: var(--md-sys-color-tertiary); }
         .progress-ring .progress.urgent { stroke: var(--md-sys-color-error); }
 
@@ -362,7 +376,16 @@
         }
         .bottom-sheet.active { transform: translate(-50%, 0); border-radius: 28px 28px 0 0; }
         .sheet-handle { width: 40px; height: 4px; background: var(--md-sys-color-outline-variant); border-radius: 2px; margin: 0 auto 20px; }
-        .sheet-title { font-family: 'Zen Old Mincho', serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 24px; color: var(--md-sys-color-on-surface); }
+                .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .sheet-title { font-family: 'Zen Old Mincho', serif; font-size: 1.3rem; font-weight: 600; color: var(--md-sys-color-on-surface); }
+        .sheet-close-btn { 
+            width: 36px; height: 36px; border-radius: 18px; border: none; background: transparent; 
+            color: var(--md-sys-color-on-surface-variant); cursor: pointer; display: flex; align-items: center; justify-content: center; 
+            transition: background-color 0.3s ease, transform 0.2s var(--md-sys-motion-easing-spring); margin-right: -8px;
+        }
+        .sheet-close-btn:active { background: var(--md-sys-color-surface-variant); transform: scale(0.85); }
+        .sheet-close-btn svg { width: 22px; height: 22px; }
+
         
         .setting-group { display: flex; flex-direction: column; gap: 24px; }
         .setting-row { display: flex; align-items: center; justify-content: space-between; }
@@ -528,6 +551,19 @@
         }
         .keep-expanded-zone.show { opacity: 0.95; transform: scale(1); pointer-events: auto; }
 
+        /* 防烧屏保护层样式 */
+        .burn-in-protection-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.65); z-index: 50; pointer-events: none;
+            opacity: 0; transition: opacity 3s ease; /* 3秒极其缓慢无感地变暗 */
+        }
+        .burn-in-protection-overlay.active { opacity: 1; }
+
+        /* 赋予主容器平滑移动的能力 */
+        .app-container {
+            transition: transform 2s ease;
+        }
+
         @media (max-width: 360px) {
             .app-container { padding: 14px 14px 20px; gap: 14px; }
             .mode-card { padding: 12px 4px; font-size: 0.8rem; }
@@ -569,7 +605,9 @@ if ('serviceWorker' in navigator) {
 </script>
 <body>
     <div class="noise-overlay"></div>
-    <div class="app-container">
+    <div class="burn-in-protection-overlay" id="burnInOverlay"></div>
+    <div class="app-container" id="appContainer">
+
         <div class="top-card">
             <span class="top-card-title">番茄鐘</span>
             <div class="top-actions">
@@ -669,20 +707,73 @@ if ('serviceWorker' in navigator) {
     <div class="settings-overlay" id="settingsOverlay"></div>
     <div class="bottom-sheet" id="bottomSheet">
         <div class="sheet-handle"></div>
-        <h2 class="sheet-title" id="labelSettingsTitle">设置</h2>
+        <div class="sheet-header">
+            <h2 class="sheet-title" id="labelSettingsTitle">设置</h2>
+            <button class="sheet-close-btn" id="closeSettingsBtn" aria-label="关闭">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+        </div>
         <div class="setting-group">
-            <div class="setting-row">
+                        <div class="setting-row">
                 <div class="setting-label-wrap">
                     <svg class="setting-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
                     <span class="setting-label" id="labelLang">语言</span>
                 </div>
-                <div class="lang-segment" id="langSegment">
+                                <div class="lang-segment" id="langSegment">
                     <div class="lang-indicator" id="langIndicator"></div>
                     <button class="lang-btn active" data-lang="0">中</button>
                     <button class="lang-btn" data-lang="1">EN</button>
                     <button class="lang-btn" data-lang="2">あ</button>
                 </div>
             </div>
+
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div class="setting-row">
+                    <div class="setting-label-wrap">
+                        <svg class="setting-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.2v-2a4 4 0 0 1 4-4h12.8M7 21.9l-4-4 4-4"/><path d="M21 11.8v2a4 4 0 0 1-4 4H4.2"/></svg>
+                        <span class="setting-label" id="labelSessions">长休息前的周期数</span>
+                    </div>
+                    <span id="sessionsValueDisplay" style="font-weight: 800; color: var(--md-sys-color-primary); font-family: 'Roboto Flex'; font-size: 1.15rem;">4</span>
+                </div>
+                <md-slider id="sessionsSlider" min="2" max="8" step="1" value="4" ticks aria-label="长休息前的周期数" style="width: 100%;"></md-slider>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+
+                <div class="setting-row">
+                    <div class="setting-label-wrap">
+                        <svg class="setting-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        <span class="setting-label" id="labelWorkDur">工作时长</span>
+                    </div>
+                    <span id="workDurValue" style="font-weight: 800; color: var(--md-sys-color-primary); font-family: 'Roboto Flex';">25</span>
+                </div>
+                <md-slider id="workDurSlider" min="5" max="60" step="5" value="25" ticks style="width: 100%;"></md-slider>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="setting-row">
+                    <div class="setting-label-wrap">
+                        <svg class="setting-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                        <span class="setting-label" id="labelShortDur">短休息时长</span>
+                    </div>
+                    <span id="shortDurValue" style="font-weight: 800; color: var(--md-sys-color-primary); font-family: 'Roboto Flex';">5</span>
+                </div>
+                <md-slider id="shortDurSlider" min="1" max="15" step="1" value="5" ticks style="width: 100%;"></md-slider>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="setting-row">
+                    <div class="setting-label-wrap">
+                        <svg class="setting-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                        <span class="setting-label" id="labelLongDur">长休息时长</span>
+                    </div>
+                    <span id="longDurValue" style="font-weight: 800; color: var(--md-sys-color-primary); font-family: 'Roboto Flex';">15</span>
+                </div>
+                <md-slider id="longDurSlider" min="5" max="45" step="5" value="15" ticks style="width: 100%;"></md-slider>
+            </div>
+
+
+
             <div class="setting-row">
                 <div class="setting-label-wrap">
                     <svg class="setting-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path></svg>
@@ -710,7 +801,12 @@ if ('serviceWorker' in navigator) {
     <div class="stats-overlay" id="statsOverlay"></div>
     <div class="stats-sheet" id="statsSheet">
         <div class="sheet-handle"></div>
-        <h2 class="sheet-title" id="labelStatsTitle">使用記録與統計</h2>
+        <div class="sheet-header">
+            <h2 class="sheet-title" id="labelStatsTitle">使用記録與統計</h2>
+            <button class="sheet-close-btn" id="closeStatsBtn" aria-label="关闭">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+        </div>
         
         <div class="lang-segment stats-time-segment">
             <div class="lang-indicator" id="statsTimeIndicator"></div>
@@ -806,23 +902,32 @@ if ('serviceWorker' in navigator) {
             const statsEntryBtn = document.getElementById('statsEntryBtn');
             const statsOverlay = document.getElementById('statsOverlay');
             const statsSheet = document.getElementById('statsSheet');
+            const burnInOverlay = document.getElementById('burnInOverlay');
+            const appContainer = document.getElementById('appContainer');
             
+            // 记录当前查看的图表范围
             let currentChartRange = 'today';
+
+            // 防烧屏机制专用变量
+            let idleTimeout = null;
+            let pixelShiftInterval = null;
+
             let isExpanded = false;
 
             const CIRCUMFERENCE = 2 * Math.PI * 126;
-            const MAX_SESSIONS = 4;
+            
             
             const i18n = {
-                zh: { title: '番茄鐘', work: '工作', shortBreak: '短休息', longBreak: '长休息', settings: '設置', vibrate: '振动强度', animSpeed: '动画速度', volume: '提示音音量', language: '语言', toastWorkDone: '工作完成！休息一下吧。', toastBreakDone: '休息结束，开始工作吧。', statsEntry: '記録统计', statsTitle: '使用記録與統計', times: '次', hours: '小时', mins: '分钟', today: '今日', last7Days: '周内', last30Days: '月内', chartTitleToday: '今日专注时长', chartTitleWeek: '周内专注时长', chartTitleMonth: '月内专注时长', updateAvail: '发现新版本', updateBtn: '立即更新', days: ['一', '二', '三', '四', '五', '六', '日'], dayToday: '今', chartHint: '点击展开' },
-                en: { title: 'Pomodoro', work: 'Focus', shortBreak: 'Short Break', longBreak: 'Long Break', settings: 'Settings', vibrate: 'Haptics', animSpeed: 'Animation Speed', volume: 'Volume', language: 'Language', toastWorkDone: 'Focus done! Take a break.', toastBreakDone: 'Break over, let\'s focus.', statsEntry: 'Stats', statsTitle: 'Usage Statistics', times: 'times', hours: 'h', mins: 'min', today: 'Today', last7Days: 'This Week', last30Days: 'This Month', chartTitleToday: 'Today\'s Focus', chartTitleWeek: 'This Week\'s Focus', chartTitleMonth: 'This Month\'s Focus', updateAvail: 'Update Available', updateBtn: 'Update Now', days: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], dayToday: 'Tdy', chartHint: 'Tap to expand' },
-                ja: { title: 'ポモドーロ', work: '集中', shortBreak: '小休憩', longBreak: '長休憩', settings: '設定', vibrate: 'バイブレーション', animSpeed: 'アニメーション速度', volume: '音量', language: '言語', toastWorkDone: '集中完了！少し休みましょう。', toastBreakDone: '休憩終了！集中に戻りましょう。', statsEntry: '統計データ', statsTitle: '利用記録と統計', times: '回', hours: '時間', mins: '分', today: '今日', last7Days: '今週', last30Days: '今月', chartTitleToday: '今日の集中時間', chartTitleWeek: '今週の集中時間', chartTitleMonth: '今月の集中時間', updateAvail: '更新があります', updateBtn: 'すぐ更新', days: ['月', '火', '水', '木', '金', '土', '日'], dayToday: '今日', chartHint: 'タップで展開' },
+                zh: { title: '番茄鐘', work: '工作', shortBreak: '短休息', longBreak: '长休息', settings: '設置', vibrate: '振动强度', animSpeed: '动画速度', volume: '提示音音量', language: '语言', toastWorkDone: '工作完成！休息一下吧。', toastBreakDone: '休息结束，开始工作吧。', statsEntry: '記録统计', statsTitle: '使用記録與統計', times: '次', hours: '小时', mins: '分钟', today: '今日', last7Days: '周内', last30Days: '月内', chartTitleToday: '今日专注时长', chartTitleWeek: '周内专注时长', chartTitleMonth: '月内专注时长', updateAvail: '发现新版本', updateBtn: '立即更新', days: ['一', '二', '三', '四', '五', '六', '日'], dayToday: '今', chartHint: '点击展开', sessionsBeforeLong: '长休息前的周期数', workDur: '工作时长', shortBreakDur: '短休息时长', longBreakDur: '长休息时长' },
+                en: { title: 'Pomodoro', work: 'Focus', shortBreak: 'Short Break', longBreak: 'Long Break', settings: 'Settings', vibrate: 'Haptics', animSpeed: 'Animation Speed', volume: 'Volume', language: 'Language', toastWorkDone: 'Focus done! Take a break.', toastBreakDone: 'Break over, let\'s focus.', statsEntry: 'Stats', statsTitle: 'Usage Statistics', times: 'times', hours: 'h', mins: 'min', today: 'Today', last7Days: 'This Week', last30Days: 'This Month', chartTitleToday: 'Today\'s Focus', chartTitleWeek: 'This Week\'s Focus', chartTitleMonth: 'This Month\'s Focus', updateAvail: 'Update Available', updateBtn: 'Update Now', days: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], dayToday: 'Tdy', chartHint: 'Tap to expand', sessionsBeforeLong: 'Sessions before Long Break', workDur: 'Focus Duration', shortBreakDur: 'Short Break Duration', longBreakDur: 'Long Break Duration' },
+                ja: { title: 'ポモドーロ', work: '集中', shortBreak: '小休憩', longBreak: '長休憩', settings: '設定', vibrate: 'バイブレーション', animSpeed: 'アニメーション速度', volume: '音量', language: '言語', toastWorkDone: '集中完了！少し休みましょう。', toastBreakDone: '休憩終了！集中に戻りましょう。', statsEntry: '統計データ', statsTitle: '利用記録と統計', times: '回', hours: '時間', mins: '分', today: '今日', last7Days: '今週', last30Days: '今月', chartTitleToday: '今日の集中時間', chartTitleWeek: '今週の集中時間', chartTitleMonth: '今月の集中時間', updateAvail: '更新があります', updateBtn: 'すぐ更新', days: ['月', '火', '水', '木', '金', '土', '日'], dayToday: '今日', chartHint: 'タップで展開', sessionsBeforeLong: '長休憩までのサイクル', workDur: '集中の長さ', shortBreakDur: '小休憩の長さ', longBreakDur: '長休憩の長さ' },
             };
 
-            let appData = {
+                        let appData = {
                 durations: { work: 25*60, shortBreak: 5*60, longBreak: 15*60 },
                 isDarkTheme: false,
-                settings: { vibrate: 80, anim: 70, volume: 75, lang: 0 },
+                settings: { vibrate: 80, anim: 70, volume: 75, lang: 0, sessions: 4 },
+
                 history: {
                     work: { count: 0, seconds: 0 },
                     shortBreak: { count: 0, seconds: 0 },
@@ -843,6 +948,40 @@ if ('serviceWorker' in navigator) {
 
             function getLangStr() { return ['zh', 'en', 'ja'][appData.settings.lang] || 'zh'; }
             function getT() { return i18n[getLangStr()]; }
+
+            // ====== 防烧屏核心逻辑 ======
+            function resetIdleTimer() {
+                // 只要碰到屏幕，撤掉黑纱，重新计时
+                if (burnInOverlay) burnInOverlay.classList.remove('active');
+                if (idleTimeout) clearTimeout(idleTimeout);
+                
+                // 如果正在倒计时，15秒没碰屏幕，就盖上黑纱
+                if (isRunning) {
+                    idleTimeout = setTimeout(() => {
+                        if (isRunning && burnInOverlay) burnInOverlay.classList.add('active');
+                    }, 15000); 
+                }
+            }
+
+            function managePixelShift() {
+                if (pixelShiftInterval) clearInterval(pixelShiftInterval);
+                appContainer.style.transform = `translate(0px, 0px)`; // 回归原位
+                
+                if (isRunning) {
+                    // 每隔1分钟，极其缓慢地随机位移 1 到 4 个像素
+                    pixelShiftInterval = setInterval(() => {
+                        const shiftX = (Math.random() - 0.5) * 8; 
+                        const shiftY = (Math.random() - 0.5) * 8;
+                        appContainer.style.transform = `translate(${shiftX}px, ${shiftY}px)`;
+                    }, 60000); 
+                }
+            }
+
+            // 监听用户点击或滑动，唤醒屏幕
+            ['touchstart', 'pointerdown', 'mousemove'].forEach(evt => {
+                document.addEventListener(evt, resetIdleTimer, { passive: true });
+            });
+            // =========================
 
             function updateLangIndicator() {
                 const activeBtn = document.querySelector('.lang-btn.active');
@@ -883,7 +1022,11 @@ if ('serviceWorker' in navigator) {
                     { el: document.querySelector('.stats-time-segment [data-range="month"]'), text: t.last30Days },
                     { el: document.getElementById('lineChartTitle'), text: chartTitleStr },
                     { el: document.getElementById('labelUpdateAvail'), text: t.updateAvail },
-                    { el: document.getElementById('updateBtn'), text: t.updateBtn }
+                    { el: document.getElementById('updateBtn'), text: t.updateBtn },
+                    { el: document.getElementById('labelSessions'), text: t.sessionsBeforeLong },
+                    { el: document.getElementById('labelWorkDur'), text: t.workDur },
+                    { el: document.getElementById('labelShortDur'), text: t.shortBreakDur },
+                    { el: document.getElementById('labelLongDur'), text: t.longBreakDur }
                 ];
 
                 langBtns.forEach(btn => { btn.classList.toggle('active', parseInt(btn.dataset.lang) === appData.settings.lang); });
@@ -1148,6 +1291,19 @@ if ('serviceWorker' in navigator) {
                     animSlider.value = appData.settings.anim;
                     volumeSlider.value = appData.settings.volume;
                     updateVolumeIcon(appData.settings.volume);
+                    // 唤醒你新加的循环次数滑块
+                    const sessionsSlider = document.getElementById('sessionsSlider');
+                    const sessionsValueDisplay = document.getElementById('sessionsValueDisplay');
+                    if (sessionsSlider) sessionsSlider.value = appData.settings.sessions || 4;
+                    if (sessionsValueDisplay) sessionsValueDisplay.textContent = appData.settings.sessions || 4;
+                    
+                    // 初始化时长滑块
+                    document.getElementById('workDurSlider').value = appData.durations.work / 60;
+                    document.getElementById('workDurValue').textContent = appData.durations.work / 60;
+                    document.getElementById('shortDurSlider').value = appData.durations.shortBreak / 60;
+                    document.getElementById('shortDurValue').textContent = appData.durations.shortBreak / 60;
+                    document.getElementById('longDurSlider').value = appData.durations.longBreak / 60;
+                    document.getElementById('longDurValue').textContent = appData.durations.longBreak / 60;
                 });
 
                 applyAnimSpeed();
@@ -1275,6 +1431,10 @@ if ('serviceWorker' in navigator) {
                 updateFabState(); 
                 updateModeCards();
                 progressContainer.classList.toggle('running', isRunning);
+                
+                // 每次状态改变时，同步开启或关闭防烧屏
+                resetIdleTimer();
+                managePixelShift();
             }
 
             function clearTimer() { if(rAF_id) { cancelAnimationFrame(rAF_id); rAF_id = null; } }
@@ -1338,10 +1498,19 @@ if ('serviceWorker' in navigator) {
                 playCompletionSound();
                 if (!isSkip) {
                     vibrateComplete();
-                    if (Notification.permission === 'granted') {
+                                        if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
                         const t = getT();
-                        new Notification(t.title, { body: currentMode === 'work' ? t.toastWorkDone : t.toastBreakDone, icon: './icon.png', silent: true });
+                        try {
+                            new Notification(t.title, { body: currentMode === 'work' ? t.toastWorkDone : t.toastBreakDone, icon: './icon.png', silent: true });
+                        } catch (e) {
+                            if (navigator.serviceWorker) {
+                                navigator.serviceWorker.ready.then(reg => {
+                                    reg.showNotification(t.title, { body: currentMode === 'work' ? t.toastWorkDone : t.toastBreakDone, icon: './icon.png', silent: true });
+                                });
+                            }
+                        }
                     }
+
                     
                     appData.history[currentMode].count += 1;
                     appData.history[currentMode].seconds += totalSeconds;
@@ -1366,8 +1535,10 @@ if ('serviceWorker' in navigator) {
                 const t = getT();
                 if(currentMode === 'work') { 
                     cycleCount++; showToast(t.toastWorkDone); 
-                    if(cycleCount >= MAX_SESSIONS) { switchMode('longBreak'); } else { switchMode('shortBreak'); }
-                } else { 
+                    // 使用用户在设置里调节的数值进行判断
+                    if(cycleCount >= (appData.settings.sessions || 4)) { switchMode('longBreak'); } else { switchMode('shortBreak'); }
+                }
+ else { 
                     showToast(t.toastBreakDone); switchMode('work');
                 }
                 setTimeout(()=>{ if(!isRunning && autoStartNext && remainingSeconds === totalSeconds) { startTimer(); } }, 1600);
@@ -1377,7 +1548,6 @@ if ('serviceWorker' in navigator) {
             function switchMode(mode) { 
                 if(isRunning) return; 
                 currentMode = mode; 
-                if (mode === 'work') { cycleCount = 0; }
                 totalSeconds = appData.durations[mode]; 
                 remainingSeconds = totalSeconds; elapsedBeforePause = 0; clearTimer(); updateDisplay(); refreshUI(); 
             }
@@ -1426,6 +1596,31 @@ if ('serviceWorker' in navigator) {
                 if (id === 'vibrateSlider') { appData.settings.vibrate = val; if(navigator.vibrate) navigator.vibrate(Math.max(1, Math.floor(val/10))); }
                 if (id === 'animSlider') { appData.settings.anim = val; applyAnimSpeed(); }
                 if (id === 'volumeSlider') { appData.settings.volume = val; updateVolumeIcon(val); if(val > 0) playTone(400 + val*4, 0.05); }
+                // 监听新滑块的动作，更新数字并触发微弱的震动反馈
+                if (id === 'sessionsSlider') { 
+                    appData.settings.sessions = val; 
+                    document.getElementById('sessionsValueDisplay').textContent = val;
+                    vibrateTap(); 
+                }
+                // 处理时长调整
+                if (id === 'workDurSlider') {
+                    appData.durations.work = val * 60;
+                    document.getElementById('workDurValue').textContent = val;
+                    if (!isRunning && currentMode === 'work') switchMode('work');
+                    vibrateTap();
+                }
+                if (id === 'shortDurSlider') {
+                    appData.durations.shortBreak = val * 60;
+                    document.getElementById('shortDurValue').textContent = val;
+                    if (!isRunning && currentMode === 'shortBreak') switchMode('shortBreak');
+                    vibrateTap();
+                }
+                if (id === 'longDurSlider') {
+                    appData.durations.longBreak = val * 60;
+                    document.getElementById('longDurValue').textContent = val;
+                    if (!isRunning && currentMode === 'longBreak') switchMode('longBreak');
+                    vibrateTap();
+                }
                 saveData();
             }
 
@@ -1488,7 +1683,8 @@ if ('serviceWorker' in navigator) {
                 });
             });
 
-            [vibrateSlider, animSlider, volumeSlider].forEach(slider => {
+            // 万能神经连接：自动激活页面上的每一个滑块
+            document.querySelectorAll('md-slider').forEach(slider => {
                 slider.addEventListener('input', handleSettingsChange);
                 slider.addEventListener('change', () => { if(slider.id === 'vibrateSlider') vibrateTest(); });
             });
@@ -1621,6 +1817,17 @@ if ('serviceWorker' in navigator) {
                 if (isExpanded) collapseChart();
             });
 
+            // 给面板右侧的返回箭头绑定关闭动作
+            document.getElementById('closeSettingsBtn').addEventListener('click', () => {
+                settingsOverlay.classList.remove('active'); bottomSheet.classList.remove('active');
+                vibrateTap();
+            });
+            document.getElementById('closeStatsBtn').addEventListener('click', () => {
+                statsOverlay.classList.remove('active'); statsSheet.classList.remove('active');
+                if (isExpanded) collapseChart();
+                vibrateTap();
+            });
+
             statsEntryBtn.addEventListener('click',()=>{ 
                 statsOverlay.classList.add('active'); 
                 statsSheet.classList.add('active'); 
@@ -1640,7 +1847,7 @@ if ('serviceWorker' in navigator) {
             }
 
             fabPlay.addEventListener('click',()=>{ 
-                if (Notification.permission === 'default') Notification.requestPermission();
+                if (typeof Notification !== 'undefined' && Notification.permission === 'default') Notification.requestPermission();
                 if(isRunning){ pauseTimer(); vibrateCancel(); } else startTimer(); 
             });
             resetBtn.addEventListener('click',()=>{ resetTimer(); vibrateReset(); });
@@ -1650,7 +1857,11 @@ if ('serviceWorker' in navigator) {
                 card.addEventListener('click',()=>{ 
                     if(isRunning) return; 
                     const mode=card.dataset.mode; 
-                    if(mode && mode !== currentMode){ autoStartNext = false; vibrateTap(); switchMode(mode); } 
+                    if(mode && mode !== currentMode){ 
+                        autoStartNext = false; vibrateTap(); 
+                        if (mode === 'work') cycleCount = 0;
+                        switchMode(mode); 
+                    } 
                 }); 
             });
             
